@@ -1,0 +1,18 @@
+{
+  "site_url": "https://meghanhorton.github.io/learning-lab/",
+  "site_name": "Little Learning Lab",
+  "image_path": "assets/img/branding/social-preview.png",
+  "image_alt": "A fan of colorful cards for Reading Slider, Sentence Pyramids, Word Parts, Letter Tiles, Addition, and Lesson Plan.",
+  "default_description": "Playful language and math practice, with tools you can turn into a lesson plan.",
+  "page_descriptions": {
+    "index.html": "Playful language and math practice, with tools you can turn into a lesson plan.",
+    "lesson.html": "Build and share lesson plans with language and math activities.",
+    "language/index.html": "Explore playful reading and spelling tools in Little Learning Lab.",
+    "language/slider.html": "Practise reading words and sentences with the Reading Slider.",
+    "language/pyramid.html": "Build and read sentences one line at a time with Sentence Pyramids.",
+    "language/wordparts.html": "Practise word parts and recognise shared patterns in words.",
+    "language/lettertiles.html": "Build spelling words with reusable Letter Tiles.",
+    "math/index.html": "Explore playful number practice in Little Learning Lab.",
+    "math/addition.html": "Practise simple addition with a large number pad and optional counting stars."
+  }
+}
