@@ -185,14 +185,14 @@
     return url;
   };
   R.mascotFiles={slider:'reading-slider',pyramid:'sentence-pyramids',wordparts:'word-parts',lettertiles:'letter-tiles',lesson:'lesson-plan'};
-  R.brandIcon=key=>R.mascotFiles[key]?'<img class="tool-brand-mascot" src="'+R.siteURL('assets/img/tool-icons/'+(key==='addition'?'addition.png?v=addition1':'nav/'+R.mascotFiles[key]+'.png?v=header1')).href+'" alt="" width="44" height="44">':(R.toolIcon?R.toolIcon(key):R.icon('home'));
+  R.brandIcon=key=>R.mascotFiles[key]?'<img class="tool-brand-mascot" src="'+R.siteURL('assets/img/tool-icons/'+(['addition','numberline'].includes(key)?R.mascotFiles[key]+'.png?v=mathcharacters1':'nav/'+R.mascotFiles[key]+'.png?v=header1')).href+'" alt="" width="44" height="44">':(R.toolIcon?R.toolIcon(key):R.icon('home'));
   if(R.toolMetadata?.home)R.toolMetadata.language={name:'Language',icon:R.toolMetadata.home.icon};
   /* MINIMAL TOOLS DROPDOWN */
   R.addToolsDropdown=bar=>{
     const slot=bar.querySelector('[data-nav-slot="links"]'),details=document.createElement('details');details.className='minimal-tools';
     const summary=document.createElement('summary');summary.className='icon-button minimal-tools-toggle';summary.textContent='Tools';details.appendChild(summary);
     const panel=document.createElement('nav');panel.className='minimal-tools-panel';panel.setAttribute('aria-label','Tools');
-    const tools=[['slider','Reading Slider','reading-slider','#048CD6'],['pyramid','Sentence Pyramids','sentence-pyramids','#FF6B43'],['wordparts','Word Parts','word-parts','#552CB8'],['lettertiles','Letter Tiles','letter-tiles','#FC7DA8'],['addition','Addition','addition','#FC4F42']];
+    const tools=[['slider','Reading Slider','reading-slider','#048CD6'],['pyramid','Sentence Pyramids','sentence-pyramids','#FF6B43'],['wordparts','Word Parts','word-parts','#552CB8'],['lettertiles','Letter Tiles','letter-tiles','#FC7DA8'],['addition','Addition','addition','#FC4F42'],['numberline','Number Line','numberline','#048CD6']];
     const planLink=document.createElement('a');planLink.className='minimal-tools-item tools-plan-entry';planLink.href=R.siteURL('lesson.html').href;planLink.style.setProperty('--tool-link-color','#906E37');
     const planImage=document.createElement('img');planImage.src=R.siteURL('assets/img/tool-icons/lesson-plan.png').href;planImage.alt='';planImage.width=44;planImage.height=50;planLink.appendChild(planImage);
     const planName=document.createElement('span');planName.textContent='Lesson Plan';planLink.appendChild(planName);if(document.body.dataset.page==='lesson')planLink.setAttribute('aria-current','page');
@@ -201,7 +201,7 @@
     for(const [key,name,file,color] of tools){
       if(key==='addition'){const heading=document.createElement('p');heading.className='math-menu-heading';heading.textContent='Math';panel.appendChild(heading);}
       const link=document.createElement('a');link.href=R.siteURL(R.practicePath(key)).href;link.className='minimal-tools-item';link.style.setProperty('--tool-link-color',color);
-      if(file){const image=document.createElement('img');image.src=R.siteURL('assets/img/tool-icons/'+file+'.png').href;image.alt='';image.width=44;image.height=50;link.appendChild(image);}else{const icon=document.createElement('span');icon.className='math-menu-icon';icon.innerHTML=R.toolIcon('addition');link.appendChild(icon);}
+      if(file){const image=document.createElement('img');image.src=R.siteURL('assets/img/tool-icons/'+file+'.png').href;image.alt='';image.width=44;image.height=50;link.appendChild(image);}else{const icon=document.createElement('span');icon.className='math-menu-icon';icon.innerHTML=R.toolIcon(key);link.appendChild(icon);}
       const label=document.createElement('span');label.textContent=name;link.appendChild(label);if(document.body.dataset.page===key)link.setAttribute('aria-current','page');
       link.addEventListener('click',event=>{if(R.creator?.context){try{link.href=R.creator.toolURL(key,R.creator.getPlan(),R.creator.context.sectionId);}catch(error){event.preventDefault();R.notice(error.message);return;}}details.open=false;});panel.appendChild(link);
     }
@@ -221,7 +221,7 @@
     const bar=R.$('#appbar');if(!bar)return;
     const menu=bar.querySelector('.minimal-tools')||bar.querySelector('.tools-dropdown');
     if(menu){let slot=bar.querySelector('.header-tools-slot');if(!slot){slot=document.createElement('div');slot.className='nav-group header-tools-slot';bar.insertBefore(slot,R.$('#app-notice'));}slot.appendChild(menu);}
-    if(['slider','pyramid','wordparts','lettertiles','addition','lesson'].includes(document.body.dataset.page)&&!bar.querySelector('.header-puppy-divider')){
+    if(['slider','pyramid','wordparts','lettertiles','addition','numberline','lesson'].includes(document.body.dataset.page)&&!bar.querySelector('.header-puppy-divider')){
       const divider=document.createElement('span');divider.className='header-puppy-divider';divider.setAttribute('aria-hidden','true');bar.insertBefore(divider,bar.querySelector('.appbar-title'));
     }
     if(document.body.dataset.page==='lesson'){
@@ -231,7 +231,7 @@
     }
   };
   /* STICKY TOOL CONTROLS */
-  R.isToolToolbarPage=()=>['slider','pyramid','wordparts','lettertiles','addition'].includes(document.body.dataset.page);
+  R.isToolToolbarPage=()=>['slider','pyramid','wordparts','lettertiles','addition','numberline'].includes(document.body.dataset.page);
   R.toolToolbarLabels={"reading-edit": "Edit", "reading-copy": "Copy link", "reading-previous": "Previous", "reading-next": "Next", "example-previous": "Previous example", "example-next": "Next example", "tiles-edit": "Edit", "tiles-copy": "Copy link", "complete-return": "Done", "timer-start": "Start", "timer-pause": "Pause", "timer-reset": "Reset"};
   R.scheduleToolToolbar=()=>{if(!R.toolToolbar||R.toolToolbarFrame)return;R.toolToolbarFrame=requestAnimationFrame(()=>{R.toolToolbarFrame=null;R.refreshToolToolbar();});};
   R.refreshToolToolbar=()=>{
@@ -272,6 +272,13 @@
   R.lessonItemMascot=item=>{
     try{const url=R.safeURL(item.url),page=Object.keys(R.creator.names).find(page=>url.origin===R.siteRoot.origin&&url.pathname===R.siteURL(R.practicePath(page)).pathname);return page?R.lessonMascotMarkup(page):'';}catch(error){return '';}
   };
+  /* NUMBER LINE INTEGRATION */
+  R.mathFiles.add('numberline.html');toolNames.add('numberline.html');
+  R.toolMetadata.numberline={name:'Number Line',icon:"<path d=\"M8 54h64M14 44v20M32 44v20M50 44v20M68 44v20M24 44Q40 10 56 44M7 54l6-5M7 54l6 5M73 54l-6-5M73 54l-6 5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>"};
+  R.creator.names.numberline='Number Line';
+  Object.assign(R.toolToolbarLabels,{'numberline-edit':'Settings','numberline-copy':'Copy link','numberline-undo':'Undo','numberline-clear':'Clear line'});
+  /* NUMBER LINE CHARACTER */
+  R.mascotFiles.numberline='numberline';
   R.init = () => {
     if(R.initialized)return;R.initialized=true;
     const bar=R.$('#appbar');if(!bar)return;

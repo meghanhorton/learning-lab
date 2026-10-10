@@ -13,6 +13,7 @@
     "language/wordparts.html": "Practise word parts and recognise shared patterns in words.",
     "language/lettertiles.html": "Build spelling words with reusable Letter Tiles.",
     "math/index.html": "Explore playful number practice in Little Learning Lab.",
-    "math/addition.html": "Practise simple addition with a large number pad and optional counting stars."
+    "math/addition.html": "Practise simple addition with a large number pad and optional counting stars.",
+    "math/numberline.html": "Explore addition and subtraction by drawing jumps on an interactive number line."
   }
 }

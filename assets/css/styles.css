@@ -548,3 +548,37 @@ body[data-page='addition'] #appbar .tool-brand-icon { color:#FC4F42; }
 .lesson-row-mascot { display:inline-flex; align-items:center; justify-content:center; width:38px; height:44px; flex:0 0 38px; }
 .lesson-row-mascot .lesson-character-image { display:block; width:100%; height:100%; object-fit:contain; }
 .tools-plan-entry { margin-bottom:6px; }
+
+/* NUMBER LINE */
+body[data-page='numberline'] { --white-nav-tool-color:#048CD6; }
+body[data-page='numberline'] [hidden] { display:none !important; }
+body[data-page='numberline'] #appbar .tool-brand-name { font-size:20px; }
+body[data-page='numberline'] #appbar .tool-brand-icon { color:#048CD6; }
+.tool-theme[data-tool='numberline'] { --tool-color:#048CD6; --tool-ink:#18102f; --tool-name-color:#048CD6; }
+#appbar .math-menu-icon { color:var(--tool-link-color); }
+.numberline-page { max-width:1200px; }
+.numberline-presets { display:flex; flex-wrap:wrap; gap:10px; margin:24px 0; }
+.numberline-presets .btn { min-height:44px; }
+.numberline-settings-row { display:flex; flex-wrap:wrap; gap:24px; margin:24px 0; }
+.numberline-settings-row label { flex:1 1 200px; font-weight:700; color:#25194f; }
+.numberline-settings-row input { margin-top:8px; }
+.numberline-note,.numberline-keyboard-note { color:#625774; line-height:1.6; }
+#numberline-error { color:#a22a22; }
+.numberline-heading { display:flex; flex-direction:column; gap:14px; align-items:center; margin:20px 0 24px; }
+.numberline-range-label { color:#625774; font-size:15px; }
+.numberline-expression { display:block; max-width:100%; overflow-wrap:anywhere; text-align:center; color:#552CB8; font-size:clamp(28px,5vw,52px); font-weight:700; line-height:1.3; }
+.numberline-scroll { width:100%; overflow-x:auto; overscroll-behavior-x:contain; border:1px solid #e3dbed; border-radius:20px; background:#fff; scrollbar-width:thin; }
+.numberline-svg { display:block; max-width:none; touch-action:pan-x; }
+.numberline-number { font-family:'Quicksand',Arial,sans-serif; font-size:24px; font-weight:700; fill:#25194f; pointer-events:none; }
+.numberline-jump-label { font-family:'Quicksand',Arial,sans-serif; font-size:16px; font-weight:700; fill:#552CB8; pointer-events:none; }
+.numberline-tick { cursor:pointer; outline:none; }
+.numberline-tick:focus-visible .numberline-hit { fill:#f1eaff; stroke:#552CB8; stroke-width:2; rx:12; }
+.numberline-status { color:#552CB8; font-size:17px; font-weight:700; text-align:center; margin:20px 0; }
+.numberline-keyboard-note { text-align:center; font-size:13px; }
+.numberline-tool-art { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:#048CD6; color:#fff; }
+.numberline-tool-art svg { display:block; width:76%; height:auto; }
+.numberline-card-numbers { color:#fff; font-size:24px; font-weight:700; }
+
+/* NUMBER LINE CHARACTER */
+.numberline-tool-art { display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding:0; gap:0; background:#048CD6; }
+.numberline-tool-art img { display:block; width:90%; height:auto; max-height:100%; object-fit:contain; object-position:center bottom; margin:0 auto; }
