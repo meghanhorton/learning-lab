@@ -624,3 +624,17 @@ body[data-page='pyramid'] .reading-row {
 @media (prefers-reduced-motion: reduce) {
   body[data-page='pyramid'] .reading-viewport { scroll-behavior: auto; }
 }
+
+/* Sentence Pyramid example library */
+.pyramid-library { max-width: 1050px; }
+.pyramid-library .library-intro { color: var(--muted-ink); line-height: 1.65; }
+.pyramid-library .library-search { margin: 24px 0; }
+.pyramid-library section { border: 1px solid var(--border-color); border-top: 5px solid var(--theme-orange); border-radius: 18px; padding: 24px; margin: 24px 0; }
+.pyramid-library section h2 { font-size: 24px; margin-bottom: 16px; }
+.pyramid-library ul { list-style: none; padding: 0; margin: 0; }
+.pyramid-library li { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; padding: 16px 0; border-top: 1px solid #f0edf5; }
+.pyramid-library li[hidden], .pyramid-library section[hidden] { display: none !important; }
+.pyramid-library li > a { flex: 1 1 260px; color: var(--ink); font-weight: 700; text-underline-offset: 4px; }
+.pyramid-library small { color: var(--muted-ink); }
+.pyramid-library .pyramid-add { flex: 0 0 auto; }
+.pyramid-library #pyramid-results { color: var(--muted-ink); }
