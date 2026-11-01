@@ -20,13 +20,13 @@
   R.localURL = value => {const u=R.safeURL(value),file=u.pathname.split('/').pop(),subject=R.mathFiles?.has(file)?'math':R.languageFiles.has(file)?'language':null;return subject&&u.origin===R.siteRoot.origin&&u.pathname===R.siteURL(subject+'/'+file).pathname?subject+'/'+file+u.search+(new URLSearchParams(u.hash.slice(1)).has('lesson')?'':u.hash):u.href;};
   R.planItems = plan => plan?.sections?.flatMap(s=>s.items)||[];
   R.normalizePlan = raw => {
-    if(!raw||raw.version!==1||typeof raw.id!=='string'||!raw.id||raw.id.length>100||!Array.isArray(raw.sections)||raw.sections.length>50)throw Error('Invalid lesson plan.');
+    if(!raw||![1,2].includes(raw.version)||typeof raw.id!=='string'||!raw.id||raw.id.length>100||!Array.isArray(raw.sections)||raw.sections.length>50)throw Error('Invalid lesson plan.');
     const ids=new Set();let count=0;
-    return {version:1,id:raw.id,title:String(raw.title||'Reading Lesson').slice(0,200),updatedAt:Math.max(0,Number(raw.updatedAt)||0),sections:raw.sections.map(section=>{
+    return {version:R.lessonSchemaVersion(raw),id:raw.id,title:String(raw.title||'Reading Lesson').slice(0,200),updatedAt:Math.max(0,Number(raw.updatedAt)||0),sections:raw.sections.map(section=>{
       if(!section||typeof section.id!=='string'||ids.has(section.id)||!Array.isArray(section.items))throw Error('Invalid section.');ids.add(section.id);
       return{id:section.id,title:String(section.title||'Section').slice(0,200),items:section.items.map(item=>{
         if(!item||typeof item.id!=='string'||ids.has(item.id)||++count>200)throw Error('Invalid activity.');ids.add(item.id);
-        return{id:item.id,title:String(item.title||'Activity').slice(0,200),url:R.localURL(item.url),done:!!item.done,timer:R.timer(item.timer)};
+        return R.normalizeLessonItem(item);
       })};
     })};
   };
@@ -34,11 +34,11 @@
   R.lastPlan = () => {try{const id=localStorage.getItem('reading:last-lesson');return id?R.readPlan(id):null;}catch(error){return null;}};
   function mergeTimers(plan,other){const map=new Map(R.planItems(other).map(i=>[i.id,i]));R.planItems(plan).forEach(item=>{const local=R.timer(map.get(item.id)?.timer);if(local.updatedAt>R.timer(item.timer).updatedAt)item.timer=local;});return plan;}
   R.freshPlan = plan => {const local=R.readPlan(plan.id);return local?mergeTimers(local.updatedAt>=plan.updatedAt?local:plan,local.updatedAt>=plan.updatedAt?plan:local):plan;};
-  R.touchPlan = plan => {plan.updatedAt=Math.max(Date.now(),plan.updatedAt+1);return plan;};
-  R.savePlan = plan => {mergeTimers(plan,R.readPlan(plan.id));R.planItems(plan).forEach(i=>i.url=R.localURL(i.url));try{localStorage.setItem('reading:lesson:'+plan.id,JSON.stringify(plan));localStorage.setItem('reading:last-lesson',plan.id);return true;}catch(error){return false;}};
-  R.planSnapshot = plan => {const copy=JSON.parse(JSON.stringify(mergeTimers(plan,R.readPlan(plan.id))));R.planItems(copy).forEach(item=>{const t=R.timer(item.timer);item.timer={...t,elapsedMs:R.elapsed(t),runningSince:null};});return copy;};
+  R.touchPlan = plan => {plan.version=R.lessonSchemaVersion(plan);plan.updatedAt=Math.max(Date.now(),plan.updatedAt+1);return plan;};
+  R.savePlan = plan => {plan.version=R.lessonSchemaVersion(plan);mergeTimers(plan,R.readPlan(plan.id));R.planItems(plan).forEach(i=>{if(R.isOfflineItem(i))i.url=null;else i.url=R.localURL(i.url);});try{localStorage.setItem('reading:lesson:'+plan.id,JSON.stringify(plan));localStorage.setItem('reading:last-lesson',plan.id);return true;}catch(error){return false;}};
+  R.planSnapshot = plan => {const copy=JSON.parse(JSON.stringify(mergeTimers(plan,R.readPlan(plan.id))));copy.version=R.lessonSchemaVersion(copy);R.planItems(copy).forEach(item=>{const t=R.timer(item.timer);item.timer={...t,elapsedMs:R.elapsed(t),runningSince:null};});return copy;};
   R.lessonURL = (plan,base='lesson.html') => {const u=R.safeURL(base);u.search='';u.hash='plan='+R.encode(R.planSnapshot(plan));return u.href;};
-  R.activityURL = (item,plan) => {const u=R.safeURL(item.url);if(u.origin===location.origin&&toolNames.has(u.pathname.split('/').pop()))u.hash='lesson='+R.encode({version:1,plan,itemId:item.id,returnBase:R.siteURL('lesson.html').href});return u.href;};
+  R.activityURL = (item,plan) => {if(R.isOfflineItem(item))throw Error("Offline activities do not have a web address.");const u=R.safeURL(item.url);if(u.origin===location.origin&&toolNames.has(u.pathname.split('/').pop()))u.hash='lesson='+R.encode({version:1,plan,itemId:item.id,returnBase:R.siteURL('lesson.html').href});return u.href;};
   R.parseCSV = text => {
     const rows=[];let row=[],cell='',quoted=false,closed=false;text=text.replace(/^\uFEFF/,'');
     for(let i=0;i<text.length;i++){const c=text[i];if(quoted){if(c==='"'){if(text[i+1]==='"'){cell+='"';i++;}else{quoted=false;closed=true;}}else cell+=c;}else if(c==='"'&&!cell.trim()&&!closed){cell='';quoted=true;}else if(c===','){row.push(cell);cell='';closed=false;}else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);rows.push(row);row=[];cell='';closed=false;}else if(closed&&!/\s/.test(c))throw Error('Unexpected text after a CSV quote.');else if(!closed)cell+=c;}
@@ -273,7 +273,7 @@
   /* CHARACTER ICONS + LESSON PLAN MENU */
   R.mascotFiles.addition='addition';
   R.lessonMascotMarkup=page=>{const file=R.mascotFiles[page];return file?'<img class="lesson-character-image" src="'+R.siteURL('assets/img/tool-icons/'+file+'.png').href+'" alt="" loading="lazy" decoding="async">':(R.toolIcon?R.toolIcon(page):R.icon('lesson'));};
-  R.lessonItemMascot=item=>{
+  R.lessonItemMascot=item=>{if(R.isOfflineItem(item))return R.offlineItemIcon(item.kind);
     try{const url=R.safeURL(item.url),page=Object.keys(R.creator.names).find(page=>url.origin===R.siteRoot.origin&&url.pathname===R.siteURL(R.practicePath(page)).pathname);return page?R.lessonMascotMarkup(page):'';}catch(error){return '';}
   };
   /* NUMBER LINE INTEGRATION */
@@ -283,6 +283,16 @@
   Object.assign(R.toolToolbarLabels,{'numberline-edit':'Settings','numberline-copy':'Copy link','numberline-undo':'Undo','numberline-clear':'Clear line'});
   /* NUMBER LINE CHARACTER */
   R.mascotFiles.numberline='numberline';
+  /* OFFLINE LESSON ACTIVITIES */
+  R.isOfflineItem=item=>item?.kind==='worksheet'||item?.kind==='book';
+  R.lessonSchemaVersion=plan=>plan.version===2||(Array.isArray(plan.sections)&&plan.sections.some(section=>Array.isArray(section?.items)&&section.items.some(R.isOfflineItem)))?2:1;
+  R.normalizeLessonItem=item=>{
+    const kind=item.kind===undefined?'link':item.kind;
+    if(!['link','worksheet','book'].includes(kind))throw Error('Unsupported lesson activity type.');
+    if(kind==='link'&&(typeof item.url!=='string'||!item.url.trim()))throw Error('Web activities need an address. Choose Worksheet or Book reading for an offline item.');
+    return{id:item.id,title:String(item.title||'Activity').slice(0,200),kind,url:kind==='link'?R.localURL(item.url):null,reference:String(item.reference||'').slice(0,300),notes:String(item.notes||'').slice(0,2000),done:!!item.done,timer:R.timer(item.timer)};
+  };
+  R.offlineItemIcon=kind=>'<svg class="tool-glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="'+(kind==='book'?'M3 4h6c2 0 3 1 3 3v14c0-2-2-3-4-3H3V4Zm18 0h-6c-2 0-3 1-3 3v14c0-2 2-3 4-3h5V4Z':'M5 3h10l4 4v14H5V3Zm10 0v5h4M8 12h8M8 16h6')+'" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>';
   R.init = () => {
     if(R.initialized)return;R.initialized=true;
     const bar=R.$('#appbar');if(!bar)return;
