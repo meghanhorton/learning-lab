@@ -654,3 +654,17 @@ body[data-page='pyramid'] .reading-row {
 
 .section-offline-add.edit-only { display:none; }
 .is-editing .section-offline-add.edit-only { display:flex; }
+
+/* WEEKLY PDF REPORT */
+.weekly-pdf-dialog { width:min(600px,calc(100vw - 28px)); max-height:calc(100dvh - 32px); overflow:auto; padding:26px; border:0; border-radius:22px; color:#25194f; background:#fff; }
+.weekly-pdf-dialog::backdrop { background:#25194f80; }
+.weekly-pdf-dialog h2 { color:#552CB8; font-size:28px; font-weight:700; }
+.weekly-pdf-dialog p { font-size:14px; line-height:1.6; }
+.weekly-pdf-dialog label { display:block; font-weight:700; margin:16px 0; }
+.weekly-pdf-dialog .form-control { margin-top:8px; }
+.weekly-pdf-dates { display:flex; flex-wrap:wrap; gap:18px; }
+.weekly-pdf-dates label { flex:1 1 170px; }
+.weekly-pdf-dialog .weekly-pdf-choice { display:flex; align-items:center; gap:10px; min-height:44px; font-size:15px; }
+.weekly-pdf-actions { display:flex; justify-content:flex-end; gap:12px; margin-top:22px; }
+.weekly-pdf-dialog .btn { min-height:44px; }
+.weekly-pdf-dialog [hidden] { display:none !important; }

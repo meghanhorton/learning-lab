@@ -11,6 +11,8 @@ $(function(){
   R.action('lesson-new','new','New blank lesson',()=>{if(!confirm('Start a new blank plan? Keep a link or backup of your current lesson.'))return;plan=blankPlan();editing=true;changed();render();});
   R.action('lesson-export','save','Save lesson backup',()=>{plan=R.freshPlan(plan);const url=URL.createObjectURL(new Blob([JSON.stringify(R.planSnapshot(plan),null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(plan.title.replace(/[^a-z0-9_-]+/gi,'-')||'lesson')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
   R.action('lesson-import','up','Import lesson backup',()=>R.$('#lesson-import-file').click());
+  /* WEEKLY PDF REPORT ACTION */
+  R.action('lesson-weekly-pdf','save','Weekly PDF',()=>R.weeklyReport.open(()=>R.freshPlan(plan)));
   function moveButton(className,label,text,disabled){return $('<button type="button" class="btn btn-sm btn-outline-secondary">').addClass(className).text(text).attr('aria-label',label).prop('disabled',disabled);}
   /* LESSON BUILDER: launch tools with an explicit target plan and section. */
   let creating=new URLSearchParams(location.search).get('create')==='1',builderSectionId='';
