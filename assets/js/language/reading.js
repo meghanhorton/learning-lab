@@ -78,14 +78,46 @@
         const available=Math.max(46,this.viewport.clientWidth-112),gap=28,measureBox=document.createElement('div');measureBox.className='measurement-row';this.stage.appendChild(measureBox);lines.flat().forEach(w=>{w.letters.style.removeProperty('--word-size');measureBox.appendChild(w.el);let width=w.el.getBoundingClientRect().width;if(width>available){w.letters.style.setProperty('--word-size',requested*available/width+'px');width=w.el.getBoundingClientRect().width;}w.width=width;});const groups=[];
         lines.forEach(line=>{let group=[],width=0;line.forEach(w=>{if(group.length&&width+gap+w.width>available){groups.push(group);group=[];width=0;}width+=w.width+(group.length?gap:0);group.push(w);});if(group.length)groups.push(group);});measureBox.remove();
         groups.forEach((words,i)=>{const page=document.createElement('div');page.className='reading-page';const row=new Row(words,this,i);this.rows.push(row);page.appendChild(row.el);this.stage.appendChild(page);});this.rowIndex=resizing?Math.max(0,this.rows.findIndex(row=>row.words.includes(anchor))):Math.min(this.examples[this.exampleIndex].index,this.rows.length-1);
+      }else if(this.mode==='pyramid'){
+        /* PYRAMID FIXED SIZE PAGINATION v1 */
+        this.pyramidPages=[];
+        this.stage.style.setProperty('--pyramid-viewport-height',this.viewport.clientHeight+'px');
+        lines.forEach((words,i)=>{
+          words.forEach(w=>w.letters.style.removeProperty('--word-size'));
+          const row=new Row(words,this,i);this.rows.push(row);this.stage.appendChild(row.el);
+        });
+        this.rowIndex=Math.min(this.rowIndex,this.rows.length-1);
+        const availableHeight=Math.max(1,this.viewport.clientHeight-48),gap=20;
+        let page=null,used=0,widest=0;
+        this.rows.forEach(row=>{
+          const rect=row.el.getBoundingClientRect(),height=rect.height;
+          widest=Math.max(widest,rect.width);
+          if(!page||(used>0&&used+gap+height>availableHeight)){
+            page=document.createElement('section');page.className='pyramid-page';
+            page.setAttribute('aria-label',`Pyramid page ${this.pyramidPages.length+1}`);
+            this.pyramidPages.push(page);this.stage.appendChild(page);used=0;
+          }
+          row.pyramidPage=this.pyramidPages.length-1;
+          page.appendChild(row.el);used+=(used?gap:0)+height;
+        });
+        this.stage.style.width=Math.max(this.viewport.clientWidth,widest+88)+'px';
       }else{
         lines.forEach((words,i)=>{words.forEach(w=>w.letters.style.removeProperty('--word-size'));const row=new Row(words,this,i);this.rows.push(row);this.stage.appendChild(row.el);});this.rowIndex=Math.min(this.rowIndex,this.rows.length-1);
         const available=Math.max(46,this.viewport.clientWidth-88),height=this.viewport.clientHeight-40;let size=requested;
-        for(let n=0;n<12;n++){this.stage.style.setProperty('--reading-size',size+'px');this.stage.style.setProperty('--word-gap',Math.max(4,28*size/requested)+'px');this.stage.style.setProperty('--line-gap',Math.max(8,20*size/requested)+'px');const width=Math.max(...this.rows.map(row=>row.el.getBoundingClientRect().width));const total=this.rows.reduce((s,row)=>s+row.el.getBoundingClientRect().height,0)+(this.rows.length-1)*Math.max(8,20*size/requested);const ratio=Math.min(1,available/width,this.mode==='pyramid'?height/total:1);if(ratio>=.995||size<=18)break;size=Math.max(18,size*ratio);}
+        for(let n=0;n<12;n++){this.stage.style.setProperty('--reading-size',size+'px');this.stage.style.setProperty('--word-gap',Math.max(4,28*size/requested)+'px');this.stage.style.setProperty('--line-gap',Math.max(8,20*size/requested)+'px');const width=Math.max(...this.rows.map(row=>row.el.getBoundingClientRect().width));const total=this.rows.reduce((s,row)=>s+row.el.getBoundingClientRect().height,0)+(this.rows.length-1)*Math.max(8,20*size/requested);const ratio=Math.min(1,available/width);if(ratio>=.995||size<=18)break;size=Math.max(18,size*ratio);}
         this.rows.forEach(row=>{const width=row.el.getBoundingClientRect().width;if(width>available)row.words.forEach(w=>w.letters.style.setProperty('--word-size',size*available/width+'px'));});
       }
       if(this.mode==='wordparts'){this.rows.forEach(row=>{const word=row.words[0],rect=row.el.getBoundingClientRect(),first=word.spans[word.part.start].getBoundingClientRect(),last=word.spans[word.part.end-1].getBoundingClientRect();let offset=rect.width/2-((first.left+last.right)/2-rect.left);const limit=Math.max(0,(this.viewport.clientWidth-rect.width)/2-32);offset=Math.max(-limit,Math.min(limit,offset));row.el.style.setProperty('--anchor-offset',offset+'px');});this.intro=wasIntro;if(this.intro)this.makeIntro();}
-      this.rows.forEach(row=>row.measure());this.updateNav();this.progress(false);if(this.mode==='slider')this.viewport.scrollTo({top:this.rowIndex*this.viewport.clientHeight,behavior:'instant'});
+      this.rows.forEach(row=>row.measure());this.updateNav();this.progress(false);if(this.mode==='pyramid')this.revealPyramidPage();if(this.mode==='slider')this.viewport.scrollTo({top:this.rowIndex*this.viewport.clientHeight,behavior:'instant'});
+    }
+    revealPyramidPage(smooth=false){
+      if(this.mode!=='pyramid'||!this.rows.length)return;
+      const row=this.rows[this.rowIndex],page=this.pyramidPages?.[row.pyramidPage];
+      if(!page)return;
+      const top=page.offsetTop;
+      if(Math.abs(this.viewport.scrollTop-top)>1)this.viewport.scrollTo({
+        top,left:0,behavior:smooth&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'smooth':'instant'
+      });
     }
     makeIntro(){const section=document.createElement('section');section.className='part-intro';const title=document.createElement('h2');title.textContent='Our word part';const part=document.createElement('div');part.className='intro-part';part.textContent=this.saved.part;const note=document.createElement('p');note.textContent=`Look for ${this.saved.part} in each word.`;const button=document.createElement('button');button.className='btn btn-primary btn-lg';button.type='button';button.textContent='Let’s read →';button.addEventListener('click',()=>{section.remove();this.intro=false;this.updateNav();this.progress(false);this.focus();});section.append(title,part,note,button);this.stage.appendChild(section);}
     updateNav(){const active=this.active,examples=this.saved?.format==='csv';R.setAction(this.edit,{visible:active});R.setAction(this.copy,{visible:active});R.setAction(this.previous,{visible:active&&this.mode!=='pyramid',disabled:this.busy||this.intro||this.rowIndex===0});R.setAction(this.next,{visible:active&&this.mode!=='pyramid',disabled:this.busy||this.intro||this.rowIndex===this.rows.length-1});R.setAction(this.previousExample,{visible:active&&examples,disabled:this.busy||this.exampleIndex===0});R.setAction(this.nextExample,{visible:active&&examples,disabled:this.busy||this.exampleIndex===this.examples.length-1});this.counter.hidden=!active||(!examples&&this.mode!=='wordparts');this.counter.textContent=examples?`${this.exampleIndex+1} of ${this.examples.length}`:this.intro?'':`${this.rowIndex+1} of ${this.rows.length}`;
@@ -93,7 +125,7 @@
       const dots=R.$('#example-dots');dots.hidden=!active||!examples;dots.replaceChildren();if(examples)this.examples.forEach((example,i)=>{const button=document.createElement('button');button.type='button';button.className='example-dot';button.classList.toggle('is-current',i===this.exampleIndex);button.classList.toggle('is-completed',example.lines.flat().every(w=>w.complete));button.setAttribute('aria-label',`Example ${i+1}`);if(i===this.exampleIndex)button.setAttribute('aria-current','true');button.addEventListener('click',()=>this.switchExample(i));dots.appendChild(button);});
     }
     progress(released){if(!this.active)return;const dragging=this.rows.some(row=>row.pointer!==null),example=this.examples[this.exampleIndex],all=example.lines.flat().every(w=>w.complete);if(released&&!dragging&&this.rows[this.rowIndex]?.complete){this.rows[this.rowIndex].words.forEach(w=>{w.value=1;w.paint();});this.rows[this.rowIndex].restore();}
-      if(this.mode==='pyramid'&&!dragging){const next=this.rows.findIndex(row=>!row.complete);this.rowIndex=next<0?this.rows.length-1:next;this.updateNav();}
+      if(this.mode==='pyramid'&&!dragging){const next=this.rows.findIndex(row=>!row.complete);this.rowIndex=next<0?this.rows.length-1:next;this.updateNav();if(released)this.revealPyramidPage(true);}
       else if(this.mode==='wordparts')this.updateNav();
       this.status.textContent=this.intro?'Say the word part, then start reading.':all?'Great reading! This example is complete.':this.mode==='pyramid'?`${this.rows.filter(row=>row.complete).length} of ${this.rows.length} lines complete`:'Drag the dot as you read.';
       if(released&&all&&!dragging&&!example.celebrated){example.celebrated=true;R.celebrate();}
