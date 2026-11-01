@@ -100,8 +100,12 @@
     const url=R.siteURL('language/'+mode+'.html');url.searchParams.set(format==='csv'?'csv':'text',source);
     if(part)url.searchParams.set('part',part);
     for(const key of ['groups','sight']){const value=R.$('#reading-'+key).value.trim();if(value)url.searchParams.set(key,value);}
-    const preview=(part||examples[0]).replace(/\s+/g,' ').slice(0,80);
-    return {url:url.href,title:(R.creator.names[mode]+': '+preview).slice(0,200)};
+    // Pyramid activity names use the final nonempty line of the first example.
+    const titleSource=mode==='pyramid'
+      ? examples[0].split(/\r\n|\r|\n/).map(line=>line.trim()).filter(Boolean).pop()||examples[0]
+      : part||examples[0];
+    const preview=titleSource.replace(/\s+/g,' ').slice(0,mode==='pyramid'?200:80);
+    return {url:url.href,title:((mode==='pyramid'?'Sentence Pyramids':R.creator.names[mode])+': '+preview).slice(0,200)};
   };
   R.creator.spellingContent = () => {
     const words=[...new Set(R.words(R.$('#tile-words').value).map(word=>word.toLocaleLowerCase()))];
