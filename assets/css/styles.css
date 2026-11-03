@@ -668,3 +668,14 @@ body[data-page='pyramid'] .reading-row {
 .weekly-pdf-actions { display:flex; justify-content:flex-end; gap:12px; margin-top:22px; }
 .weekly-pdf-dialog .btn { min-height:44px; }
 .weekly-pdf-dialog [hidden] { display:none !important; }
+
+/* TOOL GUIDES + DOLCH SETTINGS */
+.tool-help { margin:20px 0 28px; padding:18px 20px; background:#faf8ff; border:1px solid #e3dbed; border-radius:16px; color:#25194f; }
+.tool-help summary { font-weight:700; color:#552CB8; cursor:pointer; min-height:28px; }
+.tool-help ol { margin:16px 0 0; padding-left:22px; }
+.tool-help li { margin:10px 0; line-height:1.65; font-size:15px; }
+.dolch-setting { margin:14px 0; padding:12px 14px; border:1px solid #e3dbed; border-radius:12px; background:#faf8ff; }
+.dolch-setting label { display:flex; align-items:center; gap:10px; min-height:32px; font-weight:700; color:#25194f; }
+.dolch-setting input { flex:0 0 auto; margin:0; }
+.dolch-setting p { margin:8px 0 0; color:#625774; font-size:13px; line-height:1.5; }
+@media(max-width:576px) { .tool-help { padding:15px; } }

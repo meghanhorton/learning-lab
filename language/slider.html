@@ -39,6 +39,7 @@
   </nav>
   <main id="setup-panel" class="page-content setup-panel">
     <h1>Reading Slider</h1>
+<details class="tool-help" id="tool-how-to"><summary>How to use Reading Slider</summary><ol><li>Enter a passage in Plain text mode, or choose CSV for multiple examples. In CSV, quote cells that contain commas or line breaks; each nonempty cell becomes one example.</li><li>Choose the text size. Add letter combinations such as sh, ee or ea, and optional whole sight words, separated by commas.</li><li>Use the Dolch checkbox to combine the complete built-in list with your words, or uncheck it to use only your list. The words are not inserted into the exercise; matching words receive whole-word emphasis.</li><li>Select Start reading. Drag the dot across the current row and release it at the end. Completed rows advance after a short pause; use Previous/Next in the bottom bar when needed.</li><li>For CSV activities, use example controls/dots to change examples. On a keyboard, focus a reading dot and use arrows or Home/End; Page Up/Down changes rows.</li><li>Use Edit to return to setup and Copy link to share the content and settings. In Create mode, Add to lesson saves the activity. Story Slider opens the story library when installed.</li></ol></details>
     <form id="reading-form">
       <label for="reading-format" class="form-label">Input format</label>
       <select id="reading-format" class="form-select mb-3">
@@ -57,6 +58,7 @@
         <input id="reading-groups" class="form-control" placeholder="ee, ea, sh">
         <label for="reading-sight" class="form-label mt-3">Whole sight words (comma-separated)</label>
         <input id="reading-sight" class="form-control" placeholder="the, to, you">
+<div class="dolch-setting"><label for="reading-dolch"><input id="reading-dolch" type="checkbox" class="form-check-input" checked> Use all Dolch sight words</label><p>Includes 220 service words and 95 nouns. When checked, these are added to any whole sight words above. Uncheck to use only your own list. Words are highlighted only when they occur in your reading text.</p></div>
         <p class="small text-secondary mt-2 mb-0">Groups use a purple track and are read together with a shorter drag.</p>
       </fieldset>
       <button id="reading-start" class="btn btn-primary btn-lg" type="submit">Start reading</button>

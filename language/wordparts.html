@@ -39,6 +39,7 @@
   </nav>
   <main id="setup-panel" class="page-content setup-panel">
     <h1>Word Parts</h1>
+<details class="tool-help" id="tool-how-to"><summary>How to use Word Parts</summary><ol><li>Enter the shared part, such as all, without requiring hyphens. Add a word list separated by commas, spaces or line breaks, such as all, ball, call, small.</li><li>Every word must contain the selected part. If an error lists words, correct them or choose a different part before starting.</li><li>Add optional letter combinations or whole sight words. Dolch is enabled by default and supplements your list. To emphasize only the selected part, turn Dolch off and leave the whole-word box empty.</li><li>Start, say the word part on the introduction screen, then select Let’s read. Drag the dot across a word and release when complete; the next word appears after a short pause.</li><li>The common part remains visually anchored while the other letters change. Use Previous/Next for manual navigation; CSV example controls appear for multiple examples.</li><li>Edit changes the setup; Copy link preserves the settings. In Create mode, Add to lesson adds the current word-part practice to your chosen section.</li></ol></details>
     <form id="reading-form">
       <input id="reading-format" type="hidden" value="text">
       <label for="reading-part" class="form-label">Word part</label>
@@ -54,6 +55,7 @@
         <input id="reading-groups" class="form-control" placeholder="ee, ea, sh">
         <label for="reading-sight" class="form-label mt-3">Whole sight words (comma-separated)</label>
         <input id="reading-sight" class="form-control" placeholder="the, to, you">
+<div class="dolch-setting"><label for="reading-dolch"><input id="reading-dolch" type="checkbox" class="form-check-input" checked> Use all Dolch sight words</label><p>Includes 220 service words and 95 nouns. When checked, these are added to any whole sight words above. Uncheck to use only your own list. Words are highlighted only when they occur in your reading text.</p></div>
         <p class="small text-secondary mt-2 mb-0">Groups use a purple track and are read together with a shorter drag.</p>
       </fieldset>
       <button id="reading-start" class="btn btn-primary btn-lg" type="submit">Start reading</button>

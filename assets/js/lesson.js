@@ -109,7 +109,24 @@ $(function(){
   $('#lesson-clear').on('click',()=>{if(!confirm('Clear completion checkboxes? Recorded times will be kept.'))return;plan.sections.forEach(s=>s.items.forEach(i=>i.done=false));changed();render();});
   $('#lesson-import-file').on('change',async function(){if(!this.files[0])return;try{plan=R.normalizePlan(JSON.parse(await this.files[0].text()));editing=false;changed();render();message('Lesson imported.');}catch(error){message('Import failed: '+error.message);}this.value='';});
   function refreshTimes(){if(!plan)return;const fresh=R.freshPlan(plan),map=new Map(R.planItems(fresh).map(i=>[i.id,i]));R.planItems(plan).forEach(item=>{const other=map.get(item.id);if(other&&R.timer(other.timer).updatedAt>R.timer(item.timer).updatedAt)item.timer=other.timer;});const now=Date.now();let total=0;R.planItems(plan).forEach(item=>{const elapsed=R.elapsed(item.timer,now);total+=elapsed;const row=document.querySelector(`[data-item="${CSS.escape(item.id)}"] .item-time`);if(row){const text=R.formatTime(elapsed);if(row.textContent!==text)row.textContent=text;}});$('#lesson-total').text(R.formatTime(total));$('#lesson-progress').text(`${R.planItems(plan).filter(i=>i.done).length} of ${R.planItems(plan).length} activities complete`);}
-  try{const value=new URLSearchParams(location.hash.slice(1)).get('plan');plan=value?R.freshPlan(R.normalizePlan(R.decode(value))):R.lastPlan()||blankPlan();editing=plan.sections.length===0;render();persist();}
-  catch(error){plan=blankPlan();editing=true;render();message('That lesson link could not be loaded. Your saved data has not been deleted. '+error.message);}
+  /* DEFAULT EXAMPLE LESSON LOAD */
+  async function loadInitialLesson(){
+    const panel=R.$('#lesson-panel'),footer=R.$('#lesson-editor-nav');if(panel)panel.inert=true;if(footer)footer.inert=true;
+    const controls=Array.from(document.querySelectorAll('#lesson-panel button,#lesson-panel input,#lesson-panel select,#lesson-panel textarea,#lesson-editor-nav button')).map(el=>[el,el.disabled]);controls.forEach(([el])=>el.disabled=true);
+    let warning='';const value=new URLSearchParams(location.hash.slice(1)).get('plan');
+    try{
+      if(value){plan=R.freshPlan(R.normalizePlan(R.decode(value)));}
+      else{
+        message('Loading the default Week 2 lesson…');const abort=new AbortController(),timeout=setTimeout(()=>abort.abort(),15000);
+        try{const response=await fetch(R.siteURL('examples/Week-2-November-2-2026.json'),{cache:'no-cache',signal:abort.signal});if(!response.ok)throw Error('HTTP '+response.status);const sample=R.normalizePlan(await response.json());plan=R.freshPlan(sample);}
+        catch(error){plan=R.lastPlan()||blankPlan();warning='Could not load examples/Week-2-November-2-2026.json. Your saved lesson (or a blank one) is shown instead. Open the deployed site or serve it with python3 -m http.server, then reload. '+error.message;}
+        finally{clearTimeout(timeout);}
+      }
+      editing=plan.sections.length===0;message('');render();persist();
+      if(warning)message(warning);else if(!value&&!R.$('#lesson-message').textContent)message(R.readPlan(plan.id)?'Default lesson: Week 2: November 2, 2026. Existing saved progress for this lesson is retained.':'Default lesson loaded, but browser storage is unavailable. Export a JSON backup before leaving.');
+    }catch(error){plan=R.lastPlan()||blankPlan();editing=plan.sections.length===0;render();message('That lesson link could not be loaded. Your saved data has not been deleted. '+error.message);}
+    finally{if(panel)panel.inert=false;if(footer)footer.inert=false;controls.forEach(([el,disabled])=>{if(el.isConnected)el.disabled=disabled;});}
+  }
+  loadInitialLesson();
   setInterval(refreshTimes,250);globalThis.addEventListener('storage',refreshTimes);
 });
