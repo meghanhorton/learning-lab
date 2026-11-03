@@ -1,0 +1,438 @@
+{
+  "version": 1,
+  "id": "d39401c4-ddc1-47bc-95d9-95a8aa67fc30",
+  "title": "Review: Week 1",
+  "updatedAt": 1793553159568,
+  "sections": [
+    {
+      "id": "0721db7f-54d5-40ca-b39b-5215c9c5761e",
+      "title": "Day 1: OG and AD",
+      "items": [
+        {
+          "id": "a2db0eee-e8f2-4109-a44c-9c9e13c2547d",
+          "title": "Word Parts: og",
+          "kind": "link",
+          "url": "language/wordparts.html?text=dog%2C+log%2C+fog%2C+hog%2C+jog%2C+bog&part=og",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553135305
+          }
+        },
+        {
+          "id": "48b3b8b7-8c66-443a-b7e1-3774d9077ec0",
+          "title": "Word Parts: ad",
+          "kind": "link",
+          "url": "language/wordparts.html?text=dad%2C+mad%2C+sad%2C+bad%2C+had%2C+pad&part=ad",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553135785
+          }
+        },
+        {
+          "id": "2ac63830-7c6f-400f-b22d-5138057e2af6",
+          "title": "Sentence Pyramid: OG: Dad can jog to the dog.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=Dad%0ADad+can%0ADad+can+jog%0ADad+can+jog+to%0ADad+can+jog+to+the%0ADad+can+jog+to+the+dog.",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553136384
+          }
+        },
+        {
+          "id": "433a5451-5068-435b-9a58-d195acf94d3a",
+          "title": "Sentence Pyramid: AD: The dog is mad at Dad.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=The%0AThe+dog%0AThe+dog+is%0AThe+dog+is+mad%0AThe+dog+is+mad+at%0AThe+dog+is+mad+at+Dad.",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553138766
+          }
+        },
+        {
+          "id": "10ea6b17-38e9-4653-aee0-324f0632f62f",
+          "title": "Reading Practice: UFLI: Gus the Dog",
+          "kind": "link",
+          "url": "language/slider.html?text=Gus+is+a+dog.+Gus+the+dog+is+fun.+Gus+the+dog+can+dig.+Gus+can+dig+in%0Aa+pit.+Gus+dug+and+dug+and+dug.%0AGus+dug+in+the+mud%21+%E2%80%9CGus%21+Do+not%0Adig+in+the+mud%21%E2%80%9D+said+Mom.",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553139302
+          }
+        },
+        {
+          "id": "758b8ae2-26c3-4c8a-bda2-5af81345a705",
+          "title": "180 Days of Kindergarten: OG: Page 47",
+          "kind": "link",
+          "url": "https://meghanhorton.github.io/learning-lab/lesson.html#",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553140233
+          }
+        },
+        {
+          "id": "059c1a52-05a4-4341-99b7-9cfd7b0f0387",
+          "title": "OPT: Bob Books: Collection 6: 19 – The Dog in the Fog",
+          "kind": "link",
+          "url": "https://meghanhorton.github.io/learning-lab/lesson.html#",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553141467
+          }
+        },
+        {
+          "id": "93ccb7e1-ba6e-4399-b0a2-916d112d2a23",
+          "title": "OPT: BINGO: A1, A2, A3?",
+          "kind": "link",
+          "url": "https://meghanhorton.github.io/learning-lab/lesson.html#",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553142382
+          }
+        }
+      ]
+    },
+    {
+      "id": "adfb3376-10db-4bef-979d-f3ce1ec53515",
+      "title": "Day 2: EN and IT",
+      "items": [
+        {
+          "id": "7d79572c-fcc1-4be5-9a80-d69e97bd9acd",
+          "title": "Word Parts: en",
+          "kind": "link",
+          "url": "language/wordparts.html?text=ten%2C+hen%2C+pen%2C+men%2C+den&part=en",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553143767
+          }
+        },
+        {
+          "id": "51840188-dc1e-4733-ba06-cbb71cd715b2",
+          "title": "Word Parts: it",
+          "kind": "link",
+          "url": "language/wordparts.html?text=sit%2C+bit%2C+kit%2C+hit%2C+fit%2C+pit&part=it",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553144351
+          }
+        },
+        {
+          "id": "d3d6491b-b6a3-428a-a808-7c891e6f5226",
+          "title": "Sentence Pyramid: EN: The hen and her ten chicks can sit in the pen.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=The%0AThe+hen%0AThe+hen+and%0AThe+hen+and+her%0AThe+hen+and+her+ten%0AThe+hen+and+her+ten+chicks%0AThe+hen+and+her+ten+chicks+can%0AThe+hen+and+her+ten+chicks+can+sit%0AThe+hen+and+her+ten+chicks+can+sit+in%0AThe+hen+and+her+ten+chicks+can+sit+in+the%0AThe+hen+and+her+ten+chicks+can+sit+in+the+pen.",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553144969
+          }
+        },
+        {
+          "id": "d2870900-db39-4a64-95b0-78644a3c99cc",
+          "title": "EN/IT: Can ten little pigs fit in the pen?",
+          "kind": "link",
+          "url": "language/pyramid.html?text=Can%0ACan+ten%0ACan+ten+little%0ACan+ten+little+pigs%0ACan+ten+little+pigs+fit%0ACan+ten+little+pigs+fit+in%0ACan+ten+little+pigs+fit+in+the%0ACan+ten+little+pigs+fit+in+the+pen%3F",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553146233
+          }
+        },
+        {
+          "id": "be135fc5-6076-4aa8-97ef-867f3e1cce38",
+          "title": "Reading Practice: EN: The Pet Hen",
+          "kind": "link",
+          "url": "language/slider.html?text=Dex+has+a+pet+hen.+The+hen+is+big+and+red.+Dex+let+his+hen+run.+But+the+hen+ran+into+a+pig+pen.+The+hen+has+a+big+welt.+Dex+must+tend+to+his+red+hen.+He+gets+the+hen+in+its+bed.+%E2%80%9CYou+must+rest%2C%E2%80%9D+Dex+said.",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553147201
+          }
+        },
+        {
+          "id": "ebf529c0-4497-4825-8f8d-e3ec18ae3f2d",
+          "title": "Worksheet: EN Family",
+          "kind": "link",
+          "url": "https://meghanhorton.github.io/learning-lab/lesson.html#",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553147717
+          }
+        },
+        {
+          "id": "32614dd4-f8a9-430a-9fb1-81208eeffb77",
+          "title": "Bob Books: Collection 6: 15 – The Hen in the Den",
+          "kind": "link",
+          "url": "https://meghanhorton.github.io/learning-lab/lesson.html#",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553148185
+          }
+        }
+      ]
+    },
+    {
+      "id": "7c9ad064-e1cd-4a11-8e57-9713395ed38e",
+      "title": "Day 3: AT and UG",
+      "items": [
+        {
+          "id": "ee466c15-2e21-4ada-bda8-fb8e28814852",
+          "title": "Word Parts: at",
+          "kind": "link",
+          "url": "language/wordparts.html?text=cat%2C+bat%2C+hat%2C+mat%2C+rat%2C+sat&part=at",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553149366
+          }
+        },
+        {
+          "id": "8b22f4d0-c45d-4304-862c-8f136e8264a9",
+          "title": "Word Parts: ug",
+          "kind": "link",
+          "url": "language/wordparts.html?text=bug%2C+hug%2C+mug%2C+rug%2C+tug%2C+dug&part=ug",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553149853
+          }
+        },
+        {
+          "id": "9f79a8b7-49b6-4b8f-bb9e-80e98540fc47",
+          "title": "Sentence Pyramid: AT: The cat sat on the mat with a bug.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=The%0AThe+cat%0AThe+cat+sat%0AThe+cat+sat+on%0AThe+cat+sat+on+the%0AThe+cat+sat+on+the+mat%0AThe+cat+sat+on+the+mat+with%0AThe+cat+sat+on+the+mat+with+a%0AThe+cat+sat+on+the+mat+with+a+bug.",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553150602
+          }
+        },
+        {
+          "id": "1c291025-eaac-4d0b-8f04-02fbc4b5d8a0",
+          "title": "Sentence Pyramid: UG: The pug sat on a hat by the rug.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=The%0AThe+pug%0AThe+pug+sat%0AThe+pug+sat+on%0AThe+pug+sat+on+a%0AThe+pug+sat+on+a+hat%0AThe+pug+sat+on+a+hat+by%0AThe+pug+sat+on+a+hat+by+the%0AThe+pug+sat+on+a+hat+by+the+rug.",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553151135
+          }
+        },
+        {
+          "id": "96906f10-3e77-4ad3-9463-8f158967b689",
+          "title": "Cut/Paste: The bat has a red hat.",
+          "kind": "link",
+          "url": "https://meghanhorton.github.io/learning-lab/lesson.html?create=1#",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553152249
+          }
+        },
+        {
+          "id": "7ef03a21-ed44-48a7-8c5b-5ae4925c5f3a",
+          "title": "Reading Practice: UFLI: The Red Cat and the Rat",
+          "kind": "link",
+          "url": "language/slider.html?text=The+red+cat+sees+a+rat.+The+rat+runs.+The+red+cat+runs+to+get+the+rat.+The+rat%0Ais+fast.+The+red+cat+is+not+as+fast.+The+rat+runs+to+a+raft.+The+rat+got+on%0Athe+raft.+The+red+cat+did+not+fit+on+the+raft.+The+rat+got+rid+of+the+red+cat.",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553153216
+          }
+        },
+        {
+          "id": "8cea1450-2557-468b-b394-c0ff87e2b6ac",
+          "title": "180 Days of Kindergarten: AT: Pages 14, 15, 17",
+          "kind": "link",
+          "url": "https://meghanhorton.github.io/learning-lab/lesson.html?create=1#",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553153752
+          }
+        },
+        {
+          "id": "86638f39-0268-45ca-93e0-eaf5067d9f3e",
+          "title": "Worksheet: AT Family",
+          "kind": "link",
+          "url": "https://meghanhorton.github.io/learning-lab/lesson.html?create=1#",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553154303
+          }
+        },
+        {
+          "id": "4763a66e-e2f4-4c5e-9a15-7317d9e4bae7",
+          "title": "OPT: Bob Books: Collection 1: 17 – The Big Hat",
+          "kind": "link",
+          "url": "https://meghanhorton.github.io/learning-lab/lesson.html?create=1#",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553154833
+          }
+        }
+      ]
+    },
+    {
+      "id": "397194fd-fb47-4796-9e76-6bdf10ac5f55",
+      "title": "Day 4: IP and UN",
+      "items": [
+        {
+          "id": "c121a4f1-9c80-4583-9a1c-dcd0cd1e1182",
+          "title": "Word Parts: ip",
+          "kind": "link",
+          "url": "language/wordparts.html?text=tip%2C+lip%2C+rip%2C+dip%2C+hip%2C+zip&part=ip",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553156151
+          }
+        },
+        {
+          "id": "7b8755d7-9f79-4edd-8226-39148487fd2c",
+          "title": "Word Parts: un",
+          "kind": "link",
+          "url": "language/wordparts.html?text=sun%2C+fun%2C+run%2C+bun&part=un",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553157168
+          }
+        },
+        {
+          "id": "7c81bac2-8c27-4163-8c26-4e511b5debe5",
+          "title": "Worksheet: IP Family",
+          "kind": "link",
+          "url": "https://meghanhorton.github.io/learning-lab/lesson.html?create=1#",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553157685
+          }
+        },
+        {
+          "id": "683b0740-91c7-42f8-9848-236e90a3db5b",
+          "title": "Reading Practice: UFLI: Zip the Tent",
+          "kind": "link",
+          "url": "language/slider.html?text=Jaz+and+Zed+went+on+a+trip+in+a+tent.+Jaz+sets+up+the+tent.+Zed+helps.%0A%E2%80%9CLook+at+the+pond%2C%E2%80%9D+said+Jaz.+%E2%80%9CLet%E2%80%99s+swim%21%E2%80%9D+Jaz+and+Zed+jump+in+the+pond+to+swim.+Jaz+and+Zed+see+lots+of+bugs.+%E2%80%9CYou+have+to+zip+up+the+tent%2C%E2%80%9D+said+Jaz.+%E2%80%9CIf+you+zip+it%2C+the+bugs+do+not+get+in.%E2%80%9D+Zed+runs+to+the+tent+to+zip+it+up.+The+bugs+do+not+get+in.",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553158866
+          }
+        },
+        {
+          "id": "c400e8af-96d9-4a51-9fb9-2914d050a505",
+          "title": "Spelling Practice: dog, dad, ten, sit, cat, hug, tip, sun",
+          "kind": "link",
+          "url": "language/lettertiles.html?text=dog%2C+dad%2C+ten%2C+sit%2C+cat%2C+hug%2C+tip%2C+sun",
+          "reference": "",
+          "notes": "",
+          "done": true,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553159567
+          }
+        }
+      ]
+    }
+  ]
+}

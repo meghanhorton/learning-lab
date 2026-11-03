@@ -1,0 +1,382 @@
+{
+  "version": 2,
+  "id": "d10628c7-09e0-4921-ac36-8966fe4f2512",
+  "title": "Week 2: November 2, 2026",
+  "updatedAt": 1793569112548,
+  "sections": [
+    {
+      "id": "553f127b-ccfb-4261-9ebe-692f91b463db",
+      "title": "Day 1: ALL",
+      "items": [
+        {
+          "id": "a162bf0a-fe79-4ec3-a2da-04a0a6b71f23",
+          "title": "Word Parts: ALL",
+          "kind": "link",
+          "url": "language/wordparts.html?part=all&text=all,ball,call,hall,wall,fall,tall,mall,small",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "aed766fa-e1e9-453c-add4-e07315931fe8",
+          "title": "Sentence Pyramids: -all, -oll, -ull: I want to go to the mall.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=I%0AI+want%0AI+want+to%0AI+want+to+go%0AI+want+to+go+to%0AI+want+to+go+to+the%0AI+want+to+go+to+the+mall.",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "eaac8d55-c454-4f48-8b8d-0a4394e85b51",
+          "title": "Sentence Pyramids: -all, -oll, -ull: The pup is in the hall.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=The%0AThe+pup%0AThe+pup+is%0AThe+pup+is+in%0AThe+pup+is+in+the%0AThe+pup+is+in+the+hall.",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "107c2f05-3700-4262-9d57-b5960478f2ee",
+          "title": "Story Slider: Ross at the mall",
+          "kind": "link",
+          "url": "language/slider.html?text=Ross+and+his+mom+went+to+the+mall.+Ross+got+golf+clubs+and+golf+balls.+The+golf+balls+are+small.+The+man+from+the+mall+said+%0ARoss+can+hit+the+balls+in+the+hall.+Ross+taps+the+ball+with+the+club.+The+ball+rolls+up+the+hall+%0Aand+hits+the+tall+wall.+%E2%80%9CLook+at+me%21%E2%80%9D+Ross+calls+to+Mom+from+the+hall.+He+did+not+want+to+stop+but+Mom%0A+said+he+had+to+go.+It+was+fun+to+hit+golf+balls+in+the+mall%21",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "8b63f1f0-051f-4228-8cc4-57177c142df9",
+          "title": "Worksheet: ALL family",
+          "kind": "worksheet",
+          "url": null,
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553225481
+          }
+        },
+        {
+          "id": "e00e5c22-5f94-4a71-92b8-584cb21c36e7",
+          "title": "Worksheet: Build a word: ALL",
+          "kind": "worksheet",
+          "url": null,
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553233561
+          }
+        }
+      ]
+    },
+    {
+      "id": "1791d519-4efb-4fb4-b76f-1539976b6bfa",
+      "title": "Day 2: ND and FT",
+      "items": [
+        {
+          "id": "d5e3c538-5ff3-44c8-9654-be91bd8ae6fa",
+          "title": "Word Parts: ND",
+          "kind": "link",
+          "url": "language/wordparts.html?part=nd&text=hand,sand,land,bend,send,wind,pond",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793545703198
+          }
+        },
+        {
+          "id": "3ced57d5-d1f7-4aa6-8dfd-10c771587809",
+          "title": "Word Parts: FT",
+          "kind": "link",
+          "url": "language/wordparts.html?part=ft&text=gift,left,lift,raft,soft",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793545741999
+          }
+        },
+        {
+          "id": "9a8d5517-c254-4d92-a106-7ea5293b26eb",
+          "title": "Sentence Pyramids: Ending Blends: She sank into the pond.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=She%0AShe+sank%0AShe+sank+into%0AShe+sank+into+the%0AShe+sank+into+the+pond.",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "8260e0b6-1e23-4f51-b514-7e96d8b3616e",
+          "title": "Sentence Pyramids: Papa left a soft gift for Liza and Ellie.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=Papa%0APapa+left%0APapa+left+a+soft%0APapa+left+a+soft+gift%0APapa+left+a+soft+gift+for%0APapa+left+a+soft+gift+for+Liza%0APapa+left+a+soft+gift+for+Liza+and+Ellie.",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "4910a0fb-710c-4dd7-a37d-1f7a2381aec1",
+          "title": "Story Slider: Tim and his six dogs",
+          "kind": "link",
+          "url": "language/slider.html?text=Tim+and+his+six+dogs+are+%0Aon+a+trip+to+the+pond.+The+dogs+do+flips+in+the+mud+%0Aand+spin+in+the+sand.+Next%2C+Tim+and+his+six+dogs+jump%0Ain+the+pond+for+a+swim.+Tim+said%2C+%E2%80%9CI+see+a+disk.%E2%80%9D+The+dogs+swim+to+get+the+disk.+Tim+and+his+dogs+are+wet.+Drip%21+Drip%21+Drip%21+%E2%80%9CThe+trip+to+the+pond+was+fun%2C%E2%80%9D+said+Tim.+%E2%80%9CYip%2C+Yip%2C%E2%80%9D+said+the+six+dogs.",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "2a769d3a-79b7-49d1-8b83-f6ea0e8ca385",
+          "title": "Worksheet: ND",
+          "kind": "worksheet",
+          "url": null,
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553287658
+          }
+        }
+      ]
+    },
+    {
+      "id": "084a110e-1162-4a81-b189-932918da2b39",
+      "title": "Day 3: SK and ST",
+      "items": [
+        {
+          "id": "fe187b15-2723-4dad-8c73-10be267e64ea",
+          "title": "Word Parts: SK",
+          "kind": "link",
+          "url": "language/wordparts.html?part=sk&text=ask,desk,mask,task,disk",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "cd350a46-212b-41ea-a368-f8a47f6c93f1",
+          "title": "Word Parts: ST",
+          "kind": "link",
+          "url": "language/wordparts.html?part=st&text=just,last,must,rest,best,fast,nest,dust",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "a59eaa52-b460-459b-ba3c-ee70bc8e1659",
+          "title": "Sentence Pyramid: Liza lost the mask and must ask Papa to help.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=Liza+lost%0ALiza+lost+the+mask%0ALiza+lost+the+mask+and%0ALiza+lost+the+mask+and+must+ask%0ALiza+lost+the+mask+and+must+ask+Papa%0ALiza+lost+the+mask+and+must+ask+Papa+to+help.",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "c569dcdb-3753-4ee7-8ea6-1d4c066d7a5c",
+          "title": "Sentence Pyramids: Kent and Stan must lift the last box onto the raft and then rest.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=Kent+and+Stan%0AKent+and+Stan+must%0AKent+and+Stan+must+lift%0AKent+and+Stan+must+lift+the+last+box%0AKent+and+Stan+must+lift+the+last+box+onto+the+raft%0AKent+and+Stan+must+lift+the+last+box+onto+the+raft+and+then%0AKent+and+Stan+must+lift+the+last+box+onto+the+raft+and+then+rest.",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "849040bd-a1ea-424f-9721-d026c2bdb4f9",
+          "title": "Story Slider: Lost",
+          "kind": "link",
+          "url": "language/slider.html?text=Dom+is+lost.+He+went+to+look+at+a+frog+%0Aand+lost+his+mom.+He+can+not+spot+his+mom.+Is+Mom+at+the+camp%3F+No.+Mom+is+not+at+the+camp.+Is+Mom+in+the+sandbox%3F+No.+Mom+is+not+in+the+sandbox.+Dom+stops+at+the+pond.+He+can+see+his+mom%21+He+runs+to+his+mom.+Dom+and+his+mom+look+at+frogs%0Ain+the+pond.",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "406faff1-cdd7-4cdf-981c-e1094f11f28b",
+          "title": "180 Days: 95-97",
+          "kind": "worksheet",
+          "url": null,
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553271275
+          }
+        }
+      ]
+    },
+    {
+      "id": "95cf9250-5153-4205-b965-96403da81e13",
+      "title": "Day 4: MP and NT",
+      "items": [
+        {
+          "id": "a0699b7d-e537-432e-84e0-bf9e1af2fbbf",
+          "title": "Word Parts: MP",
+          "kind": "link",
+          "url": "language/wordparts.html?part=mp&text=jump,lamp,damp,ramp,camp",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "ec356eec-ca96-43d4-ac49-7be40b59afa9",
+          "title": "Word Parts: NT",
+          "kind": "link",
+          "url": "language/wordparts.html?part=nt&text=tent,bent,went",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "c414a50f-8e86-459b-b309-743e4d6f4317",
+          "title": "Sentence Pyramids: -ed /d/ /t/ /ed/: He bumped his leg on the shed.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=He%0AHe+bumped%0AHe+bumped+his%0AHe+bumped+his+leg%0AHe+bumped+his+leg+on%0AHe+bumped+his+leg+on+the%0AHe+bumped+his+leg+on+the+shed.",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "6eabe3b4-c26e-4778-8f10-dfbb9928b96e",
+          "title": "Sentence Pyramids: Ending Blends: The ant was on my pant leg.",
+          "kind": "link",
+          "url": "language/pyramid.html?text=The%0AThe+ant%0AThe+ant+was%0AThe+ant+was+on%0AThe+ant+was+on+my%0AThe+ant+was+on+my+pant%0AThe+ant+was+on+my+pant+leg.",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "83244ab6-89fe-432f-b8bc-650f2fee9d45",
+          "title": "Story slider: Camp",
+          "kind": "link",
+          "url": "language/slider.html?text=Going+to+camp+is+so+much+fun.+We+all+get+to+spend+time+doing+things+we+love.+Chance+is+fishing+at+the+pond.+Ming+and+Beth+are+boxing+in+the+ring.+Sage+is+resting+in+the+tent.+Jace+and+Tess+are+acting+on+the+stage.+Len+is+looking+for+bugs+in+the+grass.+We+will+be+sad+when+camp+ends.+We+love+spending+time+at+camp%21",
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 0
+          }
+        },
+        {
+          "id": "6ac47829-598a-44c9-88fa-cf306b5b3efd",
+          "title": "180 Days: 68-69",
+          "kind": "book",
+          "url": null,
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553253358
+          }
+        },
+        {
+          "id": "a0c9a2eb-9511-4f50-9fb9-1a5ae53d33ec",
+          "title": "Worksheet: NT",
+          "kind": "worksheet",
+          "url": null,
+          "reference": "",
+          "notes": "",
+          "done": false,
+          "timer": {
+            "elapsedMs": 0,
+            "runningSince": null,
+            "updatedAt": 1793553249245
+          }
+        }
+      ]
+    }
+  ]
+}
