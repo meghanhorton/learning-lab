@@ -8,7 +8,7 @@ $(function(){
   function changed(){R.touchPlan(plan);persist();refreshTimes();}
   const edit=R.action('lesson-edit','edit','Edit lesson',()=>{editing=!editing;render();});
   R.action('lesson-copy','copy','Copy lesson link',()=>shareCurrentLesson(false));R.action('lesson-share','share','Share lesson',()=>shareCurrentLesson(true));
-  R.action('lesson-new','new','New blank lesson',()=>{if(!confirm('Start a new blank plan? Keep a link or backup of your current lesson.'))return;plan=blankPlan();editing=true;changed();render();});
+  R.action('lesson-new','new','New blank lesson',()=>{if(!confirm('Create a new blank lesson? Your current lesson stays in this profile’s saved lessons.'))return;R.profiles.pauseCurrent();plan=blankPlan();editing=true;changed();render();});
   R.action('lesson-export','save','Save lesson backup',()=>{plan=R.freshPlan(plan);const url=URL.createObjectURL(new Blob([JSON.stringify(R.planSnapshot(plan),null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=(plan.title.replace(/[^a-z0-9_-]+/gi,'-')||'lesson')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
   R.action('lesson-import','up','Import lesson backup',()=>R.$('#lesson-import-file').click());
   /* WEEKLY PDF REPORT ACTION */
@@ -107,26 +107,38 @@ $(function(){
     .on('click','.section-up,.section-down',function(){const {section}=locate(this),i=plan.sections.indexOf(section),j=i+($(this).hasClass('section-up')?-1:1);if(j<0||j>=plan.sections.length)return;[plan.sections[i],plan.sections[j]]=[plan.sections[j],plan.sections[i]];changed();render();});
   $('#lesson-add-section').on('click',()=>{if(plan.sections.length>=50){message('Maximum 50 sections.');return;}plan.sections.push({id:R.id(),title:'New section',items:[]});changed();render();});
   $('#lesson-clear').on('click',()=>{if(!confirm('Clear completion checkboxes? Recorded times will be kept.'))return;plan.sections.forEach(s=>s.items.forEach(i=>i.done=false));changed();render();});
-  $('#lesson-import-file').on('change',async function(){if(!this.files[0])return;try{plan=R.normalizePlan(JSON.parse(await this.files[0].text()));editing=false;changed();render();message('Lesson imported.');}catch(error){message('Import failed: '+error.message);}this.value='';});
+  $('#lesson-import-file').on('change',async function(){if(!this.files[0])return;try{plan=R.profiles.importPlan(JSON.parse(await this.files[0].text()));editing=false;changed();render();message('Lesson imported.');}catch(error){message('Import failed: '+error.message);}this.value='';});
   function refreshTimes(){if(!plan)return;const fresh=R.freshPlan(plan),map=new Map(R.planItems(fresh).map(i=>[i.id,i]));R.planItems(plan).forEach(item=>{const other=map.get(item.id);if(other&&R.timer(other.timer).updatedAt>R.timer(item.timer).updatedAt)item.timer=other.timer;});const now=Date.now();let total=0;R.planItems(plan).forEach(item=>{const elapsed=R.elapsed(item.timer,now);total+=elapsed;const row=document.querySelector(`[data-item="${CSS.escape(item.id)}"] .item-time`);if(row){const text=R.formatTime(elapsed);if(row.textContent!==text)row.textContent=text;}});$('#lesson-total').text(R.formatTime(total));$('#lesson-progress').text(`${R.planItems(plan).filter(i=>i.done).length} of ${R.planItems(plan).length} activities complete`);}
   /* DEFAULT EXAMPLE LESSON LOAD */
+  /* PROFILES LESSON CONTROLLER v1 */
   async function loadInitialLesson(){
+    if(!R.profiles.canUse()){
+      message(R.profiles.error||'Choose a profile before opening this lesson.');
+      for(const selector of ['#lesson-panel','#lesson-editor-nav']){const node=R.$(selector);if(node)node.inert=true;}
+      return;
+    }
     const panel=R.$('#lesson-panel'),footer=R.$('#lesson-editor-nav');if(panel)panel.inert=true;if(footer)footer.inert=true;
-    const controls=Array.from(document.querySelectorAll('#lesson-panel button,#lesson-panel input,#lesson-panel select,#lesson-panel textarea,#lesson-editor-nav button')).map(el=>[el,el.disabled]);controls.forEach(([el])=>el.disabled=true);
     let warning='';const value=new URLSearchParams(location.hash.slice(1)).get('plan');
     try{
-      if(value){plan=R.freshPlan(R.normalizePlan(R.decode(value)));}
+      if(value)plan=R.freshPlan(R.normalizePlan(R.decode(value)));
       else{
-        message('Loading the default Week 2 lesson…');const abort=new AbortController(),timeout=setTimeout(()=>abort.abort(),15000);
-        try{const response=await fetch(R.siteURL('examples/Week-2-November-2-2026.json'),{cache:'no-cache',signal:abort.signal});if(!response.ok)throw Error('HTTP '+response.status);const sample=R.normalizePlan(await response.json());plan=R.freshPlan(sample);}
-        catch(error){plan=R.lastPlan()||blankPlan();warning='Could not load examples/Week-2-November-2-2026.json. Your saved lesson (or a blank one) is shown instead. Open the deployed site or serve it with python3 -m http.server, then reload. '+error.message;}
-        finally{clearTimeout(timeout);}
+        plan=R.lastPlan()||R.profiles.listPlans(R.profiles.id)[0];
+        if(!plan){
+          message('Loading lesson…');const abort=new AbortController(),timeout=setTimeout(()=>abort.abort(),15000);
+          try{const response=await fetch(R.siteURL('examples/Week-2-November-2-2026.json'),{cache:'no-cache',signal:abort.signal});if(!response.ok)throw Error('HTTP '+response.status);plan=R.normalizePlan(await response.json());}
+          catch(error){plan=blankPlan();warning='The example could not be loaded. A blank lesson is shown instead. '+error.message;}
+          finally{clearTimeout(timeout);}
+        }
       }
-      editing=plan.sections.length===0;message('');render();persist();
-      if(warning)message(warning);else if(!value&&!R.$('#lesson-message').textContent)message(R.readPlan(plan.id)?'Default lesson: Week 2: November 2, 2026. Existing saved progress for this lesson is retained.':'Default lesson loaded, but browser storage is unavailable. Export a JSON backup before leaving.');
-    }catch(error){plan=R.lastPlan()||blankPlan();editing=plan.sections.length===0;render();message('That lesson link could not be loaded. Your saved data has not been deleted. '+error.message);}
-    finally{if(panel)panel.inert=false;if(footer)footer.inert=false;controls.forEach(([el,disabled])=>{if(el.isConnected)el.disabled=disabled;});}
+      editing=plan.sections.length===0;message('');render();persist();if(warning)message(warning);
+    }catch(error){plan=R.lastPlan()||R.profiles.listPlans(R.profiles.id)[0]||blankPlan();editing=plan.sections.length===0;render();message('That lesson could not be opened. Saved lessons have not been deleted. '+error.message);}
+    finally{if(panel)panel.inert=false;if(footer)footer.inert=false;R.profiles.refreshLibrary?.();}
   }
+  R.profiles.attachLesson({
+    getPlan:()=>plan,
+    openPlan:next=>{R.profiles.pauseCurrent();plan=R.freshPlan(next);editing=plan.sections.length===0;builderSectionId='';message('');changed();render();},
+    newPlan:()=>{R.profiles.pauseCurrent();plan=blankPlan();editing=true;builderSectionId='';message('');changed();render();}
+  });
   loadInitialLesson();
   setInterval(refreshTimes,250);globalThis.addEventListener('storage',refreshTimes);
 });

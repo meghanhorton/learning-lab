@@ -30,12 +30,12 @@
       })};
     })};
   };
-  R.readPlan = id => {try{const data=localStorage.getItem('reading:lesson:'+id);return data?R.normalizePlan(JSON.parse(data)):null;}catch(error){return null;}};
-  R.lastPlan = () => {try{const id=localStorage.getItem('reading:last-lesson');return id?R.readPlan(id):null;}catch(error){return null;}};
+  R.readPlan = id => {try{const data=localStorage.getItem(R.profileStorageKey('lesson:')+id);return data?R.normalizePlan(JSON.parse(data)):null;}catch(error){return null;}};
+  R.lastPlan = () => {try{const id=localStorage.getItem(R.profileStorageKey('last-lesson'));return id?R.readPlan(id):null;}catch(error){return null;}};
   function mergeTimers(plan,other){const map=new Map(R.planItems(other).map(i=>[i.id,i]));R.planItems(plan).forEach(item=>{const local=R.timer(map.get(item.id)?.timer);if(local.updatedAt>R.timer(item.timer).updatedAt)item.timer=local;});return plan;}
   R.freshPlan = plan => {const local=R.readPlan(plan.id);return local?mergeTimers(local.updatedAt>=plan.updatedAt?local:plan,local.updatedAt>=plan.updatedAt?plan:local):plan;};
   R.touchPlan = plan => {plan.version=R.lessonSchemaVersion(plan);plan.updatedAt=Math.max(Date.now(),plan.updatedAt+1);return plan;};
-  R.savePlan = plan => {plan.version=R.lessonSchemaVersion(plan);mergeTimers(plan,R.readPlan(plan.id));R.planItems(plan).forEach(i=>{if(R.isOfflineItem(i))i.url=null;else i.url=R.localURL(i.url);});try{localStorage.setItem('reading:lesson:'+plan.id,JSON.stringify(plan));localStorage.setItem('reading:last-lesson',plan.id);return true;}catch(error){return false;}};
+  R.savePlan = plan => {plan.version=R.lessonSchemaVersion(plan);mergeTimers(plan,R.readPlan(plan.id));R.planItems(plan).forEach(i=>{if(R.isOfflineItem(i))i.url=null;else i.url=R.localURL(i.url);});try{localStorage.setItem(R.profileStorageKey('lesson:')+plan.id,JSON.stringify(plan));localStorage.setItem(R.profileStorageKey('last-lesson'),plan.id);return true;}catch(error){return false;}};
   R.planSnapshot = plan => {const copy=JSON.parse(JSON.stringify(mergeTimers(plan,R.readPlan(plan.id))));copy.version=R.lessonSchemaVersion(copy);R.planItems(copy).forEach(item=>{const t=R.timer(item.timer);item.timer={...t,elapsedMs:R.elapsed(t),runningSince:null};});return copy;};
   R.lessonURL = (plan,base='lesson.html') => {const u=R.safeURL(base);u.search='';u.hash='plan='+R.encode(R.planSnapshot(plan));return u.href;};
   R.activityURL = (item,plan) => {if(R.isOfflineItem(item))throw Error("Offline activities do not have a web address.");const u=R.safeURL(item.url);if(u.origin===location.origin&&toolNames.has(u.pathname.split('/').pop()))u.hash='lesson='+R.encode({version:1,plan,itemId:item.id,returnBase:R.siteURL('lesson.html').href});return u.href;};
@@ -326,3 +326,205 @@
 })(window);
 
 $(function(){ window.ReadingApp.init(); });
+
+/* LITTLE LEARNING LAB PROFILES v1 */
+(function(global){
+  'use strict';
+  const R=global.ReadingApp;
+  const META='reading:profiles:v1',SESSION='reading:profile-tab:v1';
+  const animals=['kitten','puppy','bunny','fox','red panda','otter','bear','penguin'];
+  const P=R.profiles={ready:false,id:null,requiresChoice:false,error:'',animals};
+  const prefix=id=>'reading:profile:'+id+':';
+  const copy=value=>JSON.parse(JSON.stringify(value));
+  const state=()=>{const s=JSON.parse(localStorage.getItem(META)||'null');if(!s||s.version!==1||!Array.isArray(s.profiles)||!s.profiles.length||s.profiles.some(p=>!p||typeof p.id!=='string'||!p.id||typeof p.name!=='string'||!animals.includes(p.animal))||new Set(s.profiles.map(p=>p.id)).size!==s.profiles.length)throw Error('Profile storage needs recovery. Existing records have not been deleted.');return s;};
+  const write=s=>localStorage.setItem(META,JSON.stringify(s));
+  const exists=id=>state().profiles.some(p=>p.id===id);
+  const keys=()=>Array.from({length:localStorage.length},(_,i)=>localStorage.key(i)).filter(Boolean);
+  P.current=()=>{try{return state().profiles.find(p=>p.id===P.id)||null;}catch(error){return null;}};
+  P.all=()=>state().profiles;
+  P.canUse=()=>P.ready&&!P.requiresChoice&&!!P.current();
+  P.key=suffix=>{if(!P.canUse())throw Error('Choose an available profile before saving this lesson.');return prefix(P.id)+suffix;};
+  R.profileStorageKey=P.key;
+  P.pause=raw=>{const p=R.normalizePlan(copy(raw));R.planItems(p).forEach(item=>{item.timer=R.timerAction(item.timer,'pause');});return p;};
+  function cleanName(name){const value=String(name||'').trim();if(!value||value.length>60)throw Error('Enter a name between 1 and 60 characters.');return value;}
+  function cleanAnimal(animal){if(!animals.includes(animal))throw Error('Choose an animal.');return animal;}
+  P.listPlans=id=>{if(!exists(id))throw Error('That profile is no longer available.');return keys().filter(k=>k.startsWith(prefix(id)+'lesson:')).flatMap(k=>{try{return[R.normalizePlan(JSON.parse(localStorage.getItem(k)))];}catch(error){return[];}}).sort((a,b)=>b.updatedAt-a.updatedAt||a.title.localeCompare(b.title));};
+  P.putPlan=(id,raw,makeLast=true)=>{
+    if(!exists(id))throw Error('That profile is no longer available.');
+    const p=R.normalizePlan(copy(raw)),key=prefix(id)+'lesson:'+p.id,lastKey=prefix(id)+'last-lesson',old=localStorage.getItem(key),last=localStorage.getItem(lastKey);
+    if(localStorage.getItem(prefix(id)+'deleted:'+p.id))throw Error('This lesson was deleted. Import it as a new lesson to restore it.');
+    try{localStorage.setItem(key,JSON.stringify(p));if(makeLast)localStorage.setItem(lastKey,p.id);}
+    catch(error){try{if(old===null)localStorage.removeItem(key);else localStorage.setItem(key,old);if(last===null)localStorage.removeItem(lastKey);else localStorage.setItem(lastKey,last);}catch(ignored){}throw error;}
+    return p;
+  };
+  P.blank=()=>R.normalizePlan({version:1,id:R.id(),title:'New Lesson',updatedAt:Date.now(),sections:[]});
+  P.clonePlan=(raw,reset=false)=>{
+    const p=P.pause(raw);p.id=R.id();p.updatedAt=Date.now();p.sections.forEach(section=>{section.id=R.id();section.items.forEach(item=>{item.id=R.id();if(reset){item.done=false;item.timer=R.timer();}});});return p;
+  };
+  P.importPlan=raw=>P.clonePlan(raw,false);
+  P.create=(name,animal)=>{
+    const s=state(),profile={id:R.id(),name:cleanName(name),animal:cleanAnimal(animal)},plan=P.blank(),k=prefix(profile.id)+'lesson:'+plan.id,last=prefix(profile.id)+'last-lesson';
+    try{localStorage.setItem(k,JSON.stringify(plan));localStorage.setItem(last,plan.id);s.profiles.push(profile);write(s);}
+    catch(error){localStorage.removeItem(k);localStorage.removeItem(last);throw error;}
+    return profile;
+  };
+  P.update=(id,name,animal)=>{const s=state(),p=s.profiles.find(p=>p.id===id);if(!p)throw Error('That profile is no longer available.');p.name=cleanName(name);p.animal=cleanAnimal(animal);write(s);return p;};
+  P.removeProfile=id=>{
+    if(id===P.id)throw Error('Switch to another profile before deleting this one.');
+    const s=state();if(!s.profiles.some(p=>p.id===id))return;
+    s.profiles=s.profiles.filter(p=>p.id!==id);if(s.last===id)s.last=P.id;write(s);
+    keys().filter(k=>k.startsWith(prefix(id))).forEach(k=>localStorage.removeItem(k));
+  };
+  P.pauseCurrent=()=>{
+    const last=localStorage.getItem(P.key('last-lesson'));
+    for(const p of P.listPlans(P.id)){
+      if(R.planItems(p).some(i=>R.timer(i.timer).runningSince)){
+        const paused=P.pause(p);R.touchPlan(paused);P.putPlan(P.id,paused,false);
+      }
+    }
+    if(last)localStorage.setItem(P.key('last-lesson'),last);
+  };
+  P.removePlan=id=>{
+    if(!P.canUse())throw Error('Choose a profile first.');
+    const tomb=P.key('deleted:')+id,key=P.key('lesson:')+id;
+    localStorage.setItem(tomb,String(Date.now()));localStorage.removeItem(key);
+    if(localStorage.getItem(P.key('last-lesson'))===id)localStorage.removeItem(P.key('last-lesson'));
+  };
+  P.switchTo=id=>{
+    if(!exists(id))throw Error('That profile is no longer available.');
+    if(P.canUse())P.pauseCurrent();
+    const s=state();s.last=id;write(s);try{sessionStorage.setItem(SESSION,id);}catch(ignored){}
+    const url=P.requiresChoice?new URL(location.href):R.siteURL('lesson.html');url.searchParams.set('profile',id);location.assign(url.href);
+  };
+  P.familyBackup=()=>({type:'little-learning-lab-profiles',version:1,exportedAt:new Date().toISOString(),profiles:P.all().map(profile=>({name:profile.name,animal:profile.animal,plans:P.listPlans(profile.id).map(P.pause)}))});
+  P.restoreFamily=raw=>{
+    if(!raw||raw.type!=='little-learning-lab-profiles'||raw.version!==1||!Array.isArray(raw.profiles)||!raw.profiles.length||raw.profiles.length>100)throw Error('Invalid family backup.');
+    const prepared=raw.profiles.map(p=>{
+      if(!p||!Array.isArray(p.plans)||p.plans.length>1000)throw Error('Invalid profile backup.');
+      return{profile:{id:R.id(),name:cleanName(p.name),animal:cleanAnimal(p.animal)},plans:p.plans.map(raw=>P.clonePlan(raw,false))};
+    });
+    const s=state(),written=[];
+    try{
+      for(const {profile,plans} of prepared){
+        for(const plan of plans){const key=prefix(profile.id)+'lesson:'+plan.id;localStorage.setItem(key,JSON.stringify(plan));written.push(key);}
+        if(plans.length){const key=prefix(profile.id)+'last-lesson';localStorage.setItem(key,plans[0].id);written.push(key);}
+        s.profiles.push(profile);
+      }
+      write(s);
+    }catch(error){written.forEach(k=>localStorage.removeItem(k));throw error;}
+    return prepared.length;
+  };
+  P.boot=()=>{
+    try{
+      if(localStorage.getItem(META)===null){
+        const profile={id:R.id(),name:'My learning',animal:'kitten'},written=[];
+        try{
+          for(const key of keys().filter(k=>k.startsWith('reading:lesson:'))){
+            const target=prefix(profile.id)+'lesson:'+key.slice('reading:lesson:'.length),raw=localStorage.getItem(key);
+            let value=raw;try{value=JSON.stringify(P.pause(JSON.parse(raw)));}catch(ignored){}
+            localStorage.setItem(target,value);written.push(target);
+          }
+          const last=localStorage.getItem('reading:last-lesson');if(last){const target=prefix(profile.id)+'last-lesson';localStorage.setItem(target,last);written.push(target);}
+          write({version:1,last:profile.id,profiles:[profile]});
+        }catch(error){written.forEach(k=>localStorage.removeItem(k));throw error;}
+      }
+      const s=state(),requested=new URL(location.href).searchParams.get('profile');let tab=null;try{tab=sessionStorage.getItem(SESSION);}catch(ignored){}
+      const valid=id=>s.profiles.some(p=>p.id===id);
+      P.requiresChoice=!!requested&&!valid(requested);
+      P.id=valid(requested)?requested:valid(tab)?tab:valid(s.last)?s.last:s.profiles[0].id;
+      try{sessionStorage.setItem(SESSION,P.id);}catch(ignored){}
+      P.ready=true;
+    }catch(error){P.error='Profiles could not open: '+error.message+' No existing lessons were deleted. Free browser storage or restore a backup; do not clear site data.';}
+  };
+  P.boot();
+  const oldSave=R.savePlan;
+  R.savePlan=plan=>{
+    try{
+      if(!P.canUse()||localStorage.getItem(P.key('deleted:')+plan.id))return false;
+      const result=oldSave(plan);if(result)global.dispatchEvent(new CustomEvent('profiles:plan-saved'));return result;
+    }catch(error){return false;}
+  };
+  const owned=url=>url.origin===R.siteRoot.origin&&url.pathname.startsWith(R.siteRoot.pathname);
+  function bindURL(value){const u=new URL(value,location.href);if(owned(u)&&P.canUse())u.searchParams.set('profile',P.id);return u.href;}
+  for(const [obj,key] of [[R,'activityURL'],[R,'lessonURL'],[R.creator,'toolURL'],[R.creator,'lessonURL']]){
+    if(typeof obj?.[key]==='function'){const original=obj[key];obj[key]=function(...args){return bindURL(original.apply(this,args));};}
+  }
+  const init=R.init;
+  R.init=function(...args){const result=init.apply(this,args);P.mount();return result;};
+  function el(tag,text,className){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(className)node.className=className;return node;}
+  function button(text,handler,className='btn btn-outline-primary'){const b=el('button',text,className);b.type='button';b.addEventListener('click',()=>{try{handler();}catch(error){alert(error.message);}});return b;}
+  function avatar(animal){
+    const node=el('span',undefined,'profile-avatar'),index=animals.indexOf(animal);node.setAttribute('aria-hidden','true');node.dataset.animal=animal;
+    node.style.backgroundImage='url("'+R.siteURL('assets/img/profiles/animals.png').href+'")';node.style.setProperty('--avatar-x',String(index%4));node.style.setProperty('--avatar-y',String(Math.floor(index/4)));return node;
+  }
+  function download(value,name){const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'})),a=el('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  P.mount=()=>{
+    if(document.getElementById('profile-bar'))return;
+    const bar=el('aside',undefined,'profile-bar');bar.id='profile-bar';bar.setAttribute('aria-label','Learner profile');
+    if(!P.ready){bar.append(el('p',P.error,'profile-error'));}
+    else{
+      const p=P.current();if(!p){bar.append(el('p','This profile was deleted. Reload and choose another profile.','profile-error'));}
+      else{
+        const choose=button('',()=>P.openPicker(),'profile-switch-button');choose.append(avatar(p.animal),el('span',p.name,'profile-nav-name'),el('span','Switch profile','profile-switch-caption'));choose.title='Switch profile: '+p.name;choose.setAttribute('aria-label','Switch profile. Current learner: '+p.name);bar.append(choose);
+        if(P.requiresChoice)bar.append(el('p','The profile in this link is not on this browser. Choose a profile before opening the lesson.','profile-error'));
+      }
+    }
+    /* PROFILE NAV PLACEMENT v1 */
+    const appbar=document.getElementById('appbar');
+    if(appbar){
+      const slot=appbar.querySelector('[data-nav-slot="links"]')||appbar;
+      const tools=slot.querySelector('.minimal-tools');
+      if(tools)tools.after(bar);else slot.appendChild(bar);
+      requestAnimationFrame(()=>{const height=appbar.getBoundingClientRect().height;if(height>0)document.documentElement.style.setProperty('--nav-height',height+'px');R.scheduleToolToolbar?.();});
+    }else document.body.prepend(bar);
+    if(P.requiresChoice)P.openPicker();
+  };
+  P.openPicker=()=>{
+    if(!P.ready)return;
+    if(document.getElementById('profile-picker'))return;
+    const dialog=el('dialog',undefined,'profile-dialog');dialog.id='profile-picker';dialog.setAttribute('aria-labelledby','profile-picker-title');
+    const heading=el('h2','Choose a profile');heading.id='profile-picker-title';dialog.append(heading,el('p','Each child has a separate lesson list, checkboxes, and timers. Profiles stay in this browser.'));
+    const grid=el('div',undefined,'profile-grid');
+    for(const p of P.all()){
+      const card=el('div',undefined,'profile-card'),choose=button('',()=>{if(p.id===P.id&&!P.requiresChoice){dialog.close();return;}P.switchTo(p.id);},'profile-card-choice');choose.append(avatar(p.animal),el('span',p.name));if(p.id===P.id)choose.setAttribute('aria-current','true');
+      card.append(choose,button('Edit',()=>{dialog.close();P.editProfile(p);}));
+      if(p.id!==P.id)card.append(button('Delete',()=>{if(!confirm('Delete '+p.name+' and all of their lessons from this browser? Export a family backup first.'))return;P.removeProfile(p.id);dialog.close();P.openPicker();},'btn btn-outline-danger'));
+      grid.append(card);
+    }
+    const controls=el('div',undefined,'profile-actions');controls.append(button('Add child',()=>{dialog.close();P.editProfile();},'btn btn-primary'),button('Back up all profiles',()=>download(P.familyBackup(),'learning-lab-family-backup.json')));
+    const input=el('input');input.type='file';input.accept='.json,application/json';input.hidden=true;
+    input.addEventListener('change',async()=>{if(!input.files[0])return;try{const raw=JSON.parse(await input.files[0].text());if(!confirm('Restore this family backup as additional profiles? Existing profiles will be kept.'))return;const count=P.restoreFamily(raw);dialog.close();alert(count+' profiles restored as new copies.');P.openPicker();}catch(error){alert('Restore failed: '+error.message);}finally{input.value='';}});
+    controls.append(button('Restore family backup',()=>input.click()),button('Close',()=>dialog.close()));dialog.append(grid,controls,input);dialog.addEventListener('close',()=>dialog.remove());document.body.appendChild(dialog);dialog.showModal();
+  };
+  P.editProfile=profile=>{
+    const dialog=el('dialog',undefined,'profile-dialog');dialog.setAttribute('aria-labelledby','profile-edit-title');const title=el('h2',profile?'Edit profile':'Add a child');title.id='profile-edit-title';const form=el('form'),label=el('label','Name'),name=el('input',undefined,'form-control');name.id='profile-name';label.htmlFor=name.id;name.required=true;name.maxLength=60;name.value=profile?.name||'';
+    let selected=profile?.animal||'kitten';const grid=el('div',undefined,'profile-grid profile-animal-grid');grid.setAttribute('role','group');grid.setAttribute('aria-label','Choose an animal');const options=[];
+    for(const animal of animals){const b=button('',()=>{selected=animal;options.forEach(o=>o.setAttribute('aria-pressed',String(o.dataset.animal===selected)));},'profile-animal-choice');b.dataset.animal=animal;b.setAttribute('aria-label',animal);b.setAttribute('aria-pressed',String(animal===selected));b.append(avatar(animal),el('span',animal));options.push(b);grid.append(b);}
+    const error=el('p','', 'profile-error');error.setAttribute('role','alert');const submit=el('button',profile?'Save profile':'Create profile','btn btn-primary');submit.type='submit';const actions=el('div',undefined,'profile-actions');actions.append(submit,button('Cancel',()=>dialog.close()));
+    form.append(label,name,el('h3','Choose an animal'),grid,error,actions);form.addEventListener('submit',event=>{event.preventDefault();if(!form.reportValidity())return;try{if(profile){P.update(profile.id,name.value,selected);dialog.close();const bar=document.getElementById('profile-bar');if(bar)bar.remove();P.mount();P.refreshLibrary?.();}else{const created=P.create(name.value,selected);P.switchTo(created.id);}}catch(problem){error.textContent=problem.message;}});
+    dialog.append(title,form);dialog.addEventListener('close',()=>dialog.remove());document.body.appendChild(dialog);dialog.showModal();name.focus();
+  };
+  P.attachLesson=api=>{
+    if(!P.ready)return;
+    const section=el('section',undefined,'profile-lessons');section.setAttribute('aria-labelledby','profile-lessons-title');const title=el('h2');title.id='profile-lessons-title';const label=el('label','Saved lessons');label.htmlFor='profile-lesson-select';const select=el('select',undefined,'form-select');select.id='profile-lesson-select';
+    select.addEventListener('change',()=>{const next=R.readPlan(select.value);if(next)api.openPlan(next);});
+    const actions=el('div',undefined,'profile-actions');
+    actions.append(button('New lesson',()=>api.newPlan(),'btn btn-primary'),button('Make a fresh copy',()=>{const original=api.getPlan();if(!original)return;const p=P.clonePlan(R.freshPlan(original),true);p.title=(p.title+' (copy)').slice(0,200);api.openPlan(p);}),button('Delete lesson',()=>{const p=api.getPlan();if(!p||!confirm('Delete “'+p.title+'” from '+P.current().name+'? Export a backup first.'))return;P.removePlan(p.id);api.openPlan(P.listPlans(P.id)[0]||P.blank());},'btn btn-outline-danger'));
+    const destination=el('select',undefined,'form-select');destination.setAttribute('aria-label','Copy lesson to another child');const copyButton=button('Copy to child',()=>{const p=api.getPlan();if(!p||!destination.value)return;const target=P.all().find(p=>p.id===destination.value);if(!target)throw Error('Choose another child.');if(!confirm('Copy “'+p.title+'” to '+target.name+' with clear checkboxes and zero timers? The original will stay unchanged.'))return;P.putPlan(target.id,P.clonePlan(R.freshPlan(p),true));alert('Lesson copied to '+target.name+'.');});const copyControls=el('div',undefined,'profile-copy-controls');copyControls.append(destination,copyButton);
+    section.append(title,label,select,actions,copyControls);const panel=document.getElementById('lesson-panel');panel.before(section);
+    P.refreshLibrary=()=>{
+      if(!P.canUse()){section.querySelectorAll('button,select').forEach(n=>n.disabled=true);return;}
+      const current=api.getPlan();title.textContent=P.current().name+'’s lesson plans';select.replaceChildren();for(const p of P.listPlans(P.id)){const o=el('option',p.title);o.value=p.id;select.append(o);}if(current)select.value=current.id;
+      section.querySelectorAll('button,select').forEach(n=>n.disabled=!current);
+      destination.replaceChildren();const other=P.all().filter(p=>p.id!==P.id);for(const p of other){const o=el('option',p.name);o.value=p.id;destination.append(o);}copyControls.hidden=!other.length;
+    };
+    global.addEventListener('profiles:plan-saved',P.refreshLibrary);P.refreshLibrary();
+  };
+  global.addEventListener('storage',event=>{
+    if(!P.ready)return;
+    if(event.key===META){
+      if(!P.current()){const warning=el('div','This profile was deleted in another tab. Saving is disabled. Reload and choose another profile.','profile-error');document.body.prepend(warning);}
+      else{const bar=document.getElementById('profile-bar');if(bar)bar.remove();P.mount();P.refreshLibrary?.();}
+    }else if(event.key?.startsWith(prefix(P.id)))P.refreshLibrary?.();
+  });
+})(window);
