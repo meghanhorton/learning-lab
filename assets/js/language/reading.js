@@ -40,6 +40,10 @@
     cancel(){const id=this.pointer;this.pointer=null;this.el.classList.remove('is-dragging');if(id!==null&&this.handle.hasPointerCapture(id))this.handle.releasePointerCapture(id);}
     bind(){this.handle.addEventListener('pointerdown',p=>{if(!p.isPrimary||p.button!==0||this.pointer!==null||!this.owner.allowed(this.index))return;p.preventDefault();this.owner.cancelAdvance();this.measure();this.offset=p.clientX-this.el.getBoundingClientRect().left-this.rawX;this.pointer=p.pointerId;this.el.classList.add('is-dragging');this.handle.focus({preventScroll:true});this.handle.setPointerCapture(p.pointerId);});this.handle.addEventListener('pointermove',p=>{if(p.pointerId===this.pointer)this.apply(p.clientX-this.el.getBoundingClientRect().left-this.offset);});['pointerup','pointercancel'].forEach(type=>this.handle.addEventListener(type,p=>{if(p.pointerId!==this.pointer)return;if(type==='pointerup')this.apply(p.clientX-this.el.getBoundingClientRect().left-this.offset);this.cancel();this.owner.progress(type==='pointerup');}));this.handle.addEventListener('lostpointercapture',()=>{if(this.pointer===null)return;this.pointer=null;this.el.classList.remove('is-dragging');this.owner.progress(false);});this.handle.addEventListener('keydown',event=>{if(!this.owner.allowed(this.index))return;this.measure();const b=this.bounds();let next;switch(event.key){case'ArrowRight':case'ArrowUp':next=this.rawX+12;break;case'ArrowLeft':case'ArrowDown':next=this.rawX-12;break;case'Home':next=b.start;break;case'End':next=b.end;break;default:return;}event.preventDefault();this.apply(next);this.owner.progress(true);});}
   }
+  /* STORY OVERVIEW v1 */
+  function storyWordCount(text){
+    return (String(text).normalize('NFC').match(/[\p{L}\p{N}]+(?:['’\u002D\u2010\u2011][\p{L}\p{N}]+)*/gu)||[]).length;
+  }
   class Reader {
     constructor(mode){this.mode=mode;this.examples=[];this.exampleIndex=0;this.rowIndex=0;this.rows=[];this.busy=false;this.intro=false;this.active=false;this.timer=null;this.transitionTimer=null;this.epoch=0;this.viewport=R.$('#reading-viewport');this.stage=R.$('#reading-stage');this.status=R.$('#reading-status');this.setup=R.$('#setup-panel');this.view=R.$('#reader-panel');this.options={groups:[],sight:[]};this.bind();}
     cancelAdvance(){clearTimeout(this.timer);this.timer=null;}
@@ -48,6 +52,7 @@
     bind(){
       R.creator.register(()=>R.creator.readingContent(this.mode));
       this.edit=R.action('reading-edit','edit','Edit activity',()=>{this.stop();this.active=false;this.setup.hidden=false;this.view.hidden=true;document.body.classList.remove('is-reading');this.updateNav();R.$('#reading-text').focus();});
+      if(this.mode==='slider')this.storyFullButton=R.action('reading-whole-story','lesson','View whole story',()=>this.openStoryOverview(),'reading');
       this.copy=R.action('reading-copy','copy','Copy reading link',()=>R.copyLink(this.shareURL()));
       this.previous=R.action('reading-previous',this.mode==='slider'?'up':'left','Previous reading part',()=>this.go(this.rowIndex-1,true),'reading');
       this.next=R.action('reading-next',this.mode==='slider'?'down':'right','Next reading part',()=>this.go(this.rowIndex+1,true),'reading');
@@ -57,8 +62,8 @@
       R.$('#reading-size').addEventListener('input',()=>R.$('#reading-size-label').textContent=R.$('#reading-size').value+'px');
       this.viewport.addEventListener('scroll',()=>{if(this.mode!=='slider'||!this.active)return;this.cancelAdvance();clearTimeout(this.scrollTimer);this.scrollTimer=setTimeout(()=>{const index=Math.max(0,Math.min(this.rows.length-1,Math.round(this.viewport.scrollTop/this.viewport.clientHeight)));this.rowIndex=index;this.examples[this.exampleIndex].index=index;this.busy=false;this.updateNav();this.progress(false);if(this.pendingFocus){this.pendingFocus=false;this.focus();}},180);});
       let resize;const layout=()=>{if(!this.active)return;clearTimeout(resize);resize=setTimeout(()=>{const retainFocus=this.stage.contains(document.activeElement),resumeAdvance=this.timer!==null&&!this.busy&&this.rows[this.rowIndex]?.complete;this.build(true);if(resumeAdvance)this.progress(true);if(retainFocus)this.focus();},100);};global.addEventListener('resize',layout);global.addEventListener('reading:layout',layout);
-      document.addEventListener('keydown',event=>{if(!this.active)return;if(event.key==='Escape')this.edit.click();else if(event.key==='PageDown'){event.preventDefault();this.go(this.rowIndex+1,true);}else if(event.key==='PageUp'){event.preventDefault();this.go(this.rowIndex-1,true);}});
-      this.updateNav();const params=new URLSearchParams(location.search);if(params.has('groups'))R.$('#reading-groups').value=params.get('groups');if(params.has('sight'))R.$('#reading-sight').value=params.get('sight');R.$('#reading-dolch').checked=params.get('dolch')!=='0';if(this.mode==='wordparts'&&params.has('part'))R.$('#reading-part').value=params.get('part').replace(/^-+|-+$/g,'');if(params.has('csv')||params.has('text')){R.$('#reading-format').value=params.has('csv')?'csv':'text';R.$('#reading-text').value=params.get(params.has('csv')?'csv':'text');if(params.get('autostart')!=='0')R.$('#reading-form').requestSubmit();}
+      document.addEventListener('keydown',event=>{if(this.storyDialog?.open)return;if(!this.active)return;if(event.key==='Escape')this.edit.click();else if(event.key==='PageDown'){event.preventDefault();this.go(this.rowIndex+1,true);}else if(event.key==='PageUp'){event.preventDefault();this.go(this.rowIndex-1,true);}});
+      this.updateNav();const params=new URLSearchParams(location.search);if(params.has('groups'))R.$('#reading-groups').value=params.get('groups');if(params.has('sight'))R.$('#reading-sight').value=params.get('sight');R.$('#reading-dolch').checked=params.get('dolch')==='1';if(this.mode==='wordparts'&&params.has('part'))R.$('#reading-part').value=params.get('part').replace(/^-+|-+$/g,'');if(params.has('csv')||params.has('text')){R.$('#reading-format').value=params.has('csv')?'csv':'text';R.$('#reading-text').value=params.get(params.has('csv')?'csv':'text');if(params.get('autostart')!=='0')R.$('#reading-form').requestSubmit();}
     }
     async start(){
       const source=R.$('#reading-text').value.trim(),format=R.$('#reading-format').value,part=this.mode==='wordparts'?R.$('#reading-part').value.trim().normalize('NFC').replace(/^-+|-+$/g,''):'';
@@ -67,7 +72,7 @@
       if(part){const invalid=texts.flatMap(R.words).filter(w=>!partMatch(w,part));if(invalid.length)throw Error(`These words do not contain “${part}”: ${invalid.join(', ')}.`);}
       const submit=R.$('#reading-start');submit.disabled=true;try{if(document.fonts)await document.fonts.load('64px "KG Primary Penmanship Alt"');}catch(error){}finally{submit.disabled=false;}
       this.stop();this.options=options;this.saved={source,format,part,groups:R.$('#reading-groups').value.trim(),sight:R.$('#reading-sight').value.trim(),dolch:R.$('#reading-dolch').checked};
-      this.examples=texts.map(text=>{const parts=this.mode==='wordparts'?R.words(text):this.mode==='pyramid'?text.split(/\r\n|\r|\n/):text.split(/(?<=[.!?…])\s+|(?<=[.!?…]["”’'])\s+|\n+/u);return{lines:parts.map(s=>s.trim()).filter(Boolean).map(line=>line.split(/\s+/u).map(w=>new Word(w,part))),celebrated:false,index:0};});
+      this.examples=texts.map(text=>{const parts=this.mode==='wordparts'?R.words(text):this.mode==='pyramid'?text.split(/\r\n|\r|\n/):text.split(/(?<=[.!?…])\s+|(?<=[.!?…]["”’'])\s+|\n+/u);return{text,lines:parts.map(s=>s.trim()).filter(Boolean).map(line=>line.split(/\s+/u).map(w=>new Word(w,part))),celebrated:false,index:0};});
       this.exampleIndex=0;this.rowIndex=0;this.intro=this.mode==='wordparts';this.active=true;this.setup.hidden=true;this.view.hidden=false;document.body.classList.add('is-reading');R.$('#reading-error').textContent='';this.build(false);this.focus();
     }
     shareURL(){const url=new URL(location.href);url.search='';url.hash='';url.searchParams.set(this.saved.format==='csv'?'csv':'text',this.saved.source);if(this.saved.part)url.searchParams.set('part',this.saved.part);if(this.saved.groups)url.searchParams.set('groups',this.saved.groups);if(this.saved.sight)url.searchParams.set('sight',this.saved.sight);url.searchParams.set('dolch',this.saved.dolch?'1':'0');return url.href;}
@@ -120,11 +125,37 @@
       });
     }
     makeIntro(){const section=document.createElement('section');section.className='part-intro';const title=document.createElement('h2');title.textContent='Our word part';const part=document.createElement('div');part.className='intro-part';part.textContent=this.saved.part;const note=document.createElement('p');note.textContent=`Look for ${this.saved.part} in each word.`;const button=document.createElement('button');button.className='btn btn-primary btn-lg';button.type='button';button.textContent='Let’s read →';button.addEventListener('click',()=>{section.remove();this.intro=false;this.updateNav();this.progress(false);this.focus();});section.append(title,part,note,button);this.stage.appendChild(section);}
-    updateNav(){const active=this.active,examples=this.saved?.format==='csv';R.setAction(this.edit,{visible:active});R.setAction(this.copy,{visible:active});R.setAction(this.previous,{visible:active&&this.mode!=='pyramid',disabled:this.busy||this.intro||this.rowIndex===0});R.setAction(this.next,{visible:active&&this.mode!=='pyramid',disabled:this.busy||this.intro||this.rowIndex===this.rows.length-1});R.setAction(this.previousExample,{visible:active&&examples,disabled:this.busy||this.exampleIndex===0});R.setAction(this.nextExample,{visible:active&&examples,disabled:this.busy||this.exampleIndex===this.examples.length-1});this.counter.hidden=!active||(!examples&&this.mode!=='wordparts');this.counter.textContent=examples?`${this.exampleIndex+1} of ${this.examples.length}`:this.intro?'':`${this.rowIndex+1} of ${this.rows.length}`;
+    updateStoryOverviewButton(){
+      if(!this.storyFullButton)return;
+      const last=this.active&&this.rows.length>0&&this.rowIndex===this.rows.length-1;
+      R.setAction(this.storyFullButton,{visible:last,disabled:this.busy||this.rows.some(row=>row.pointer!==null)});
+    }
+    openStoryOverview(){
+      if(this.mode!=='slider'||!this.active||this.rowIndex!==this.rows.length-1||this.busy||this.rows.some(row=>row.pointer!==null))return;
+      const example=this.examples[this.exampleIndex];if(!example)return;
+      this.cancelAdvance();
+      const text=example.text??example.lines.map(line=>line.map(word=>word.text).join(' ')).join('\n');
+      const words=storyWordCount(text),complete=example.lines.flat().every(word=>word.complete);
+      if(!this.storyDialog){
+        const dialog=document.createElement('dialog');dialog.className='story-overview-dialog';dialog.setAttribute('aria-labelledby','story-overview-title');
+        const title=document.createElement('h2');title.id='story-overview-title';title.textContent='My whole story';
+        const count=document.createElement('p');count.className='story-overview-count';
+        const passage=document.createElement('div');passage.className='story-overview-text';
+        const back=document.createElement('button');back.type='button';back.className='btn btn-primary btn-lg';back.textContent='Back to Story Slider';back.autofocus=true;back.addEventListener('click',()=>dialog.close());
+        dialog.addEventListener('close',()=>{if(this.active&&!this.storyFullButton.hidden)this.storyFullButton.focus({preventScroll:true});});
+        dialog.append(title,count,passage,back);document.body.appendChild(dialog);this.storyDialog=dialog;
+      }
+      const noun=words===1?'word':'words';
+      this.storyDialog.querySelector('.story-overview-count').textContent=complete?`You read ${words.toLocaleString()} ${noun}!`:`This story has ${words.toLocaleString()} ${noun}.`;
+      this.storyDialog.querySelector('.story-overview-text').textContent=text;
+      if(!this.storyDialog.open)this.storyDialog.showModal();
+      this.storyDialog.scrollTop=0;
+    }
+    updateNav(){this.updateStoryOverviewButton();const active=this.active,examples=this.saved?.format==='csv';R.setAction(this.edit,{visible:active});R.setAction(this.copy,{visible:active});R.setAction(this.previous,{visible:active&&this.mode!=='pyramid',disabled:this.busy||this.intro||this.rowIndex===0});R.setAction(this.next,{visible:active&&this.mode!=='pyramid',disabled:this.busy||this.intro||this.rowIndex===this.rows.length-1});R.setAction(this.previousExample,{visible:active&&examples,disabled:this.busy||this.exampleIndex===0});R.setAction(this.nextExample,{visible:active&&examples,disabled:this.busy||this.exampleIndex===this.examples.length-1});this.counter.hidden=!active||(!examples&&this.mode!=='wordparts');this.counter.textContent=examples?`${this.exampleIndex+1} of ${this.examples.length}`:this.intro?'':`${this.rowIndex+1} of ${this.rows.length}`;
       this.rows.forEach((row,i)=>{row.handle.tabIndex=!this.intro&&!this.busy&&i===this.rowIndex?0:-1;row.el.classList.toggle('is-current',i===this.rowIndex&&!this.intro);if(this.mode==='pyramid'){row.el.classList.toggle('is-completed',row.complete);row.el.classList.toggle('is-pending',!row.complete&&i!==this.rowIndex);}});
       const dots=R.$('#example-dots');dots.hidden=!active||!examples;dots.replaceChildren();if(examples)this.examples.forEach((example,i)=>{const button=document.createElement('button');button.type='button';button.className='example-dot';button.classList.toggle('is-current',i===this.exampleIndex);button.classList.toggle('is-completed',example.lines.flat().every(w=>w.complete));button.setAttribute('aria-label',`Example ${i+1}`);if(i===this.exampleIndex)button.setAttribute('aria-current','true');button.addEventListener('click',()=>this.switchExample(i));dots.appendChild(button);});
     }
-    progress(released){if(!this.active)return;const dragging=this.rows.some(row=>row.pointer!==null),example=this.examples[this.exampleIndex],all=example.lines.flat().every(w=>w.complete);if(released&&!dragging&&this.rows[this.rowIndex]?.complete){this.rows[this.rowIndex].words.forEach(w=>{w.value=1;w.paint();});this.rows[this.rowIndex].restore();}
+    progress(released){if(!this.active)return;this.updateStoryOverviewButton();const dragging=this.rows.some(row=>row.pointer!==null),example=this.examples[this.exampleIndex],all=example.lines.flat().every(w=>w.complete);if(released&&!dragging&&this.rows[this.rowIndex]?.complete){this.rows[this.rowIndex].words.forEach(w=>{w.value=1;w.paint();});this.rows[this.rowIndex].restore();}
       if(this.mode==='pyramid'&&!dragging){const next=this.rows.findIndex(row=>!row.complete);this.rowIndex=next<0?this.rows.length-1:next;this.updateNav();if(released)this.revealPyramidPage(true);}
       else if(this.mode==='wordparts')this.updateNav();
       this.status.textContent=this.intro?'Say the word part, then start reading.':all?'Great reading! This example is complete.':this.mode==='pyramid'?`${this.rows.filter(row=>row.complete).length} of ${this.rows.length} lines complete`:'Drag the dot as you read.';
