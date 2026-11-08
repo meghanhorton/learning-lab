@@ -528,3 +528,69 @@ $(function(){ window.ReadingApp.init(); });
     }else if(event.key?.startsWith(prefix(P.id)))P.refreshLibrary?.();
   });
 })(window);
+
+/* LESSON NAV CONSOLIDATION v2 */
+(function(global){
+  'use strict';const R=global.ReadingApp,P=R.profiles;if(!P)return;
+  const $=id=>document.getElementById(id);
+  const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
+  const paths={link:'M10 13a5 5 0 0 0 7 .1l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7-.1l-3 3a5 5 0 0 0 7 7l2-2',paper:'M14 2H5v20h14V7l-5-5ZM14 2v5h5M8 12h8M8 16h8'};
+  const icon=key=>paths[key]?'<svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="'+paths[key]+'" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>':R.icon(key);
+  function label(button,text,key,onlyIcon=false){button.title=text;button.setAttribute('aria-label',text);button.innerHTML=icon(key);if(!onlyIcon)button.append(node('span',text,'lesson-control-label'));}
+  function action(text,handler,key){const b=node('button');b.type='button';b.className='icon-button';label(b,text,key||'lesson');b.addEventListener('click',()=>{try{handler();}catch(error){alert(error.message);}});return b;}
+  const oldMount=P.mount;
+  P.mount=()=>{
+    oldMount();const bar=$('appbar'),profile=$('profile-bar');if(!bar||!profile)return;
+    let right=$('nav-tools-profile');if(!right){right=node('div',undefined,'nav-tools-profile');right.id='nav-tools-profile';bar.append(right);}
+    const tools=bar.querySelector('.minimal-tools');if(tools&&tools.parentElement!==right)right.append(tools);if(profile.parentElement!==right)right.append(profile);
+    requestAnimationFrame(()=>{const height=bar.getBoundingClientRect().height;if(height>0)document.documentElement.style.setProperty('--nav-height',height+'px');R.scheduleToolToolbar?.();});
+  };
+  P.attachLesson=api=>{
+    if(!P.ready)return;
+    document.body.classList.add('lesson-ui-v2');document.querySelectorAll('.profile-lessons').forEach(n=>n.remove());
+    const panel=$('lesson-panel'),footer=$('lesson-editor-nav'),slot=footer?.querySelector('[data-nav-slot="lesson-editor"]');if(!panel||!footer||!slot)return;
+    let heading=$('profile-page-title');if(!heading){heading=node('h1');heading.id='profile-page-title';panel.prepend(heading);}
+    const quick=node('div',undefined,'lesson-quick-actions');quick.setAttribute('role','group');quick.setAttribute('aria-label','Edit and share lesson');
+    for(const id of ['lesson-edit','lesson-copy','lesson-share']){const b=$(id);if(b){if(id==='lesson-copy')label(b,'Copy Link','link',true);if(id==='lesson-share')label(b,'Share','share',true);quick.append(b);}}
+    slot.prepend(quick);
+    const menus=[];
+    function dropup(id,text){
+      const details=node('details',undefined,'lesson-dropup');details.id=id;const summary=node('summary',text);summary.setAttribute('aria-controls',id+'-panel');
+      const box=node('div',undefined,'lesson-menu-panel');box.id=id+'-panel';details.append(summary,box);slot.append(details);menus.push(details);
+      details.addEventListener('toggle',()=>{summary.setAttribute('aria-expanded',String(details.open));if(details.open){menus.filter(m=>m!==details).forEach(m=>m.open=false);box.style.left='0px';const rect=box.getBoundingClientRect();const shift=Math.min(0,global.innerWidth-12-rect.right)+Math.max(0,12-rect.left);box.style.left=shift+'px';}});
+      box.addEventListener('click',event=>{if(event.target.closest('button'))details.open=false;});
+      details.addEventListener('keydown',event=>{
+        if(event.key==='Escape'){details.open=false;summary.focus();event.preventDefault();return;}
+        if(!details.open||!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
+        const items=Array.from(box.querySelectorAll('button:not(:disabled),select:not(:disabled)'));if(!items.length)return;
+        const i=items.indexOf(document.activeElement);let next=event.key==='Home'?0:event.key==='End'?items.length-1:event.key==='ArrowDown'?(i+1)%items.length:(i<=0?items.length-1:i-1);items[next].focus();event.preventDefault();
+      });
+      return{details,box};
+    }
+    const manage=dropup('lesson-manage-menu','Manage Lessons');
+    for(const [id,text,key] of [['lesson-new','New Lesson','new'],['lesson-export','Save Lesson','save'],['lesson-import','Import Lesson','up']]){const b=$(id);if(b){label(b,text,key);if(id==='lesson-export')b.title='Save Lesson — download a JSON backup; browser changes also autosave';manage.box.append(b);}}
+    const remove=action('Delete Lesson',()=>{const p=api.getPlan();if(!p)return;if(!confirm('Delete “'+p.title+'” from '+P.current().name+'? Save a backup first.'))return;P.removePlan(p.id);api.openPlan(P.listPlans(P.id)[0]||P.blank());},'reset');remove.classList.add('lesson-delete-action');manage.box.append(remove);
+    const more=node('div','More options','lesson-menu-subheading');manage.box.append(more);
+    manage.box.append(action('Make a fresh copy',()=>{const p=api.getPlan();if(!p)return;const clone=P.clonePlan(R.freshPlan(p),true);clone.title=(p.title+' (copy)').slice(0,200);api.openPlan(clone);},'copy'));
+    const copyTo=action('Copy to another child',()=>{
+      const current=api.getPlan(),others=P.all().filter(p=>p.id!==P.id);if(!current||!others.length)return;
+      const dialog=node('dialog',undefined,'profile-dialog');const h=node('h2','Copy lesson to another child');h.id='copy-child-title';dialog.setAttribute('aria-labelledby',h.id);
+      const select=node('select',undefined,'form-select');select.setAttribute('aria-label','Destination child');for(const p of others){const o=node('option',p.name);o.value=p.id;select.append(o);}
+      const note=node('p','The copy starts with clear checkboxes and zero timers. The original stays unchanged.');
+      const controls=node('div',undefined,'profile-actions');controls.append(action('Copy lesson',()=>{P.putPlan(select.value,P.clonePlan(R.freshPlan(current),true));dialog.close();R.notice('Lesson copied.');},'copy'),action('Cancel',()=>dialog.close(),'left'));
+      dialog.append(h,note,select,controls);dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();
+    },'copy');manage.box.append(copyTo);
+    const saved=dropup('lesson-saved-menu','Saved Lessons');const savedLabel=node('label','Choose a saved lesson');savedLabel.htmlFor='profile-lesson-select';const select=node('select',undefined,'form-select');select.id='profile-lesson-select';
+    select.addEventListener('change',()=>{const p=R.readPlan(select.value);if(p){saved.details.open=false;api.openPlan(p);}});const status=node('p',undefined,'lesson-saved-count');saved.box.append(savedLabel,select,status);
+    const report=$('lesson-weekly-pdf');if(report){label(report,'Weekly Report','paper');slot.append(report);}
+    document.addEventListener('pointerdown',event=>{menus.forEach(m=>{if(m.open&&!m.contains(event.target))m.open=false;});});
+    P.refreshLibrary=()=>{
+      const profile=P.current(),current=api.getPlan(),available=P.canUse();heading.textContent=profile?profile.name+"'s Lesson Plan":'Lesson Plan';
+      select.replaceChildren();if(available){const plans=P.listPlans(P.id);for(const p of plans){const o=node('option',p.title);o.value=p.id;select.append(o);}if(current)select.value=current.id;status.textContent=plans.length+' saved '+(plans.length===1?'lesson':'lessons')+' for '+profile.name;}
+      manage.box.querySelectorAll('button,select').forEach(b=>b.disabled=!available||!current);quick.querySelectorAll('button').forEach(b=>b.disabled=!available||!current);select.disabled=!available||!current;copyTo.hidden=!available||P.all().filter(p=>p.id!==P.id).length===0;
+    };
+    global.addEventListener('profiles:plan-saved',P.refreshLibrary);P.refreshLibrary();
+    function measure(){const height=footer.getBoundingClientRect().height;if(height>0)document.documentElement.style.setProperty('--lesson-v2-footer-height',height+'px');}
+    if(global.ResizeObserver)new ResizeObserver(measure).observe(footer);global.addEventListener('resize',measure);requestAnimationFrame(measure);
+  };
+})(window);
