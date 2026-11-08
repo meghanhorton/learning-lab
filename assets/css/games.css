@@ -1,0 +1,31 @@
+/* Games uses the same heading, art and card classes as reading tools. */
+.home-content #reading-games{margin-top:48px;margin-bottom:48px;scroll-margin-top:calc(var(--nav-height,76px) + 24px)}
+.home-content #reading-games .tool-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;align-items:start}
+.home-content #reading-games .mascot-tool-card{max-width:none}
+.mascot-tool-card[data-tool="wordwizard"]{--mascot-color:#552CB8;--tool-color:#552CB8;--tool-ink:#fff;--tool-name-color:#552CB8}
+.tool-theme[data-tool="wordwizard"]{--tool-color:#552CB8;--tool-ink:#fff;--tool-name-color:#552CB8}
+body[data-page="wordwizard"] .ww-wrap{padding-top:calc(var(--nav-height,76px) + 32px)}
+body[data-page="wordwizard"] .appbar .tool-brand-name{color:#552CB8}
+[data-games-menu] a img{flex:0 0 auto;vertical-align:middle}
+@media(max-width:900px){.home-content #reading-games .tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:576px){.home-content #reading-games .tool-grid{grid-template-columns:1fr}.home-content #reading-games{margin-top:36px;margin-bottom:36px}}
+/* WORD WIZARD FONT REPAIR v2 */
+body[data-page="wordwizard"]{font-family:'Quicksand',Arial,sans-serif!important;font-weight:500;color:#25194f}
+body[data-page="wordwizard"] :is(h1,h2,h3,p,label,select,summary,.ww-btn,.ww-feedback,.ww-trail,.ww-nav,.appbar,.tool-brand-name){font-family:'Quicksand',Arial,sans-serif!important}
+body[data-page="wordwizard"] :is(h1,h2,h3,summary,.ww-btn,.ww-feedback,.tool-brand-name){font-weight:700}
+body[data-page="wordwizard"] .ww-tile,body[data-page="wordwizard"] .ww-bank button,body[data-page="wordwizard"] .tile,body[data-page="wordwizard"] .bank button{font-family:'KG Primary Penmanship Alt',Arial,sans-serif!important;font-weight:400!important;font-synthesis:none}
+body[data-page="wordwizard"] #appbar .appbar-title{display:flex!important;align-items:center;min-width:0}
+body[data-page="wordwizard"] #appbar .ww-navbar-brand{display:inline-flex;align-items:center;gap:9px}
+body[data-page="wordwizard"] #appbar .ww-navbar-brand img{width:46px;height:46px;object-fit:contain;flex:none}
+body[data-page="wordwizard"] #appbar .ww-navbar-brand .tool-brand-name{display:inline!important;color:#552CB8;font-size:16px;font-weight:700;white-space:nowrap}
+@media(max-width:576px){body[data-page="wordwizard"] #appbar .ww-navbar-brand img{width:36px;height:36px}body[data-page="wordwizard"] #appbar .ww-navbar-brand .tool-brand-name{font-size:13px}}
+/* WORD WIZARD NAV DIVIDER */
+body[data-page="wordwizard"] #appbar .appbar-title{
+  border-inline-start:1px solid var(--border-color,#ded8ef);
+  padding-inline-start:14px;
+  margin-inline-start:2px;
+  align-self:center;
+}
+@media(max-width:576px){
+  body[data-page="wordwizard"] #appbar .appbar-title{padding-inline-start:10px;}
+}
